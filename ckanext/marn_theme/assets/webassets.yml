@@ -1,0 +1,14 @@
+# marn_theme-js:
+#   filter: rjsmin
+#   output: ckanext-marn_theme/%(version)s-marn_theme.js
+#   contents:
+#     - js/marn_theme.js
+#   extra:
+#     preload:
+#       - base/main
+
+# marn_theme-css:
+#   filter: cssrewrite
+#   output: ckanext-marn_theme/%(version)s-marn_theme.css
+#   contents:
+#     - css/marn_theme.css

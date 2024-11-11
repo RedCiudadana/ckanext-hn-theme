@@ -1,0 +1,16 @@
+{% set type = group.type or 'group' %}
+{% set url = h.url_for(type ~ '.read', id=group.name) %}
+
+<a href="{{ url }}" class="home-group-item col-12 d-flex shadow">
+  <div class="img">
+    <img src="{{ group.image_display_url or h.url_for_static('/base/images/placeholder-group.png') }}" alt="{{ group.name }}" class="media-image img-fluid">
+  </div>
+  <div class="text">
+    <h3>{{ group.display_name }}</h3>
+    {% if group.package_count %}
+      <p class="count">{{ ungettext('{num} Dataset', '{num} Datasets', group.package_count).format(num=group.package_count) }}</p>
+    {% elif group.package_count == 0 %}
+      <p class="count">{{ _('0 Datasets') }}</p>
+    {% endif %}
+  </div>
+</a>

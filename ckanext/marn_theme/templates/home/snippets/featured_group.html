@@ -1,0 +1,11 @@
+{% set groups = h.get_featured_groups(4) %}
+
+<div class="row featured_groups">
+  <div class="col-12 text-center">
+    <h1>{{ _('Categoria de datos') }}</h1>
+    <p>Selecciona las categorías de tu interés para crear y administrar las colecciones de conjuntos de datos.</p>
+  </div>
+  {% for group in groups %}
+    {% snippet "home/snippets/group_item.html", group=group, position=False %}
+  {% endfor %}
+</div>
