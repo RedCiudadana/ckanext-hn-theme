@@ -40,7 +40,7 @@ To install ckanext-hn-theme:
 
 2. Clone the source and install it on the virtualenv
 
-    git clone https://github.com//ckanext-hn-theme.git
+    git clone https://github.com/ckan/ckanext-hn-theme.git
     cd ckanext-hn-theme
     pip install -e .
 	pip install -r requirements.txt
@@ -51,7 +51,7 @@ To install ckanext-hn-theme:
 
 4. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
 
-     sudo service apache2 reload
+     sudo service nginx reload
 
 
 ## Config settings
@@ -70,7 +70,7 @@ None at present
 To install ckanext-hn-theme for development, activate your CKAN virtualenv and
 do:
 
-    git clone https://github.com//ckanext-hn-theme.git
+    git clone https://github.com/ckan/ckanext-hn-theme.git
     cd ckanext-hn-theme
     python setup.py develop
     pip install -r dev-requirements.txt
