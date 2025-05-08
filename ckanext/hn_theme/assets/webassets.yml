@@ -1,0 +1,14 @@
+# hn_theme-js:
+#   filter: rjsmin
+#   output: ckanext-hn_theme/%(version)s-hn_theme.js
+#   contents:
+#     - js/hn_theme.js
+#   extra:
+#     preload:
+#       - base/main
+
+# hn_theme-css:
+#   filter: cssrewrite
+#   output: ckanext-hn_theme/%(version)s-hn_theme.css
+#   contents:
+#     - css/hn_theme.css

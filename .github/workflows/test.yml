@@ -44,5 +44,5 @@ jobs:
 
         ckan -c test.ini db init
     - name: Run tests
-      run: pytest --ckan-ini=test.ini --cov=ckanext.marn_theme --disable-warnings ckanext/marn_theme
+      run: pytest --ckan-ini=test.ini --cov=ckanext.hn_theme --disable-warnings ckanext/hn_theme
 

@@ -15,6 +15,6 @@ setup(
     },
     entry_points='''
         [ckan.plugins]
-        marn_theme=ckanext.marn_theme.plugin:MarnThemePlugin
+        hn_theme=ckanext.hn_theme.plugin:HnThemePlugin
     ''',
 )
