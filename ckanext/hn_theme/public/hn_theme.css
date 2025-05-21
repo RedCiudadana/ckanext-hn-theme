@@ -40,6 +40,10 @@ body {
 }
 
 .account-masthead {
+  min-height: 0;
+}
+
+.account.not-authed {
   display: none;
 }
 
