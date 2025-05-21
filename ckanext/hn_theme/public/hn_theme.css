@@ -380,8 +380,7 @@ body {
   padding: 0;
   text-align: center;
   width: fit-content;
-  margin: 0 auto 150px;
-  
+  margin: 0 auto 100px;
 } 
 
 .homepage .module-search .tags .tag {
