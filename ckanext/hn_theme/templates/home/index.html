@@ -89,7 +89,7 @@
                   <div class="card h-100 shadow text-start">
                     <div class="card-body">
                       <h3 class="card-title h5">
-                        <a href="{{ h.url_for('pages.blog_show', page='/' + post.name) }}" class="text-dark">{{
+                        <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="text-dark">{{
                           post.title or post.name }}</a>
                       </h3>
                       {% if post.publish_date %}
