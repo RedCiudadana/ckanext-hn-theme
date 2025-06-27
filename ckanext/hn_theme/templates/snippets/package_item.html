@@ -1,0 +1,91 @@
+{#
+Displays a single dataset with enhanced styling.
+
+package - A package to display.
+item_class - The class name to use on the list item.
+hide_resources - If true hides the resources (default: false).
+
+Example:
+
+{% snippet 'snippets/package_item.html', package=c.datasets[0] %}
+
+#}
+{% set title = package.title or package.name %}
+{% set notes = h.markdown_extract(package.notes, extract_length=180) %}
+
+{% block package_item %}
+<li class="">
+    {% block content %}
+    <div class="row align-items-center mb-4">
+        {% if package.organization and package.organization.image_url %}
+        <div class="col-auto">
+            <img src="{{ package.organization.image_url }}" alt="{{ package.organization.title }}" class="img-fluid"
+                style="max-height: 60px;">
+        </div>
+        {% endif %}
+        <div class="col card shadow-sm p-3">
+            {% block heading %}
+            {% block heading_private %}
+            {% if package.private %}
+            <span class="badge bg-secondary">
+                <i class="fa fa-lock"></i>
+                {{ _('Private') }}
+            </span>
+            {% endif %}
+            {% endblock %}
+            {% block heading_title %}
+            <h2 class="h5 mb-0">
+                <a href="{{ h.url_for('%s.read' % package.type, id=package.name) }}" class="text-decoration-none"
+                    title="{{ title }}">
+                    {{title|truncate(80)}}
+                </a>
+            </h2>
+            {% endblock %}
+            {% block heading_meta %}
+            {% if package.get('state', '').startswith('draft') %}
+            <span class="badge bg-info">{{ _('Draft') }}</span>
+            {% elif package.get('state', '').startswith('deleted') %}
+            <span class="badge bg-danger">{{ _('Deleted') }}</span>
+            {% endif %}
+            {% endblock %}
+            {% endblock %}
+            <div class="row mt-3">
+                <div class="col-md-8">
+                    {% block notes %}
+                    {% if notes %}
+                    <div class="text-muted">{{ notes|urlize }}</div>
+                    {% else %}
+                    <p class="text-muted fst-italic">{{ h.humanize_entity_type('package', package.type, 'no
+                        description') or _("There is no description for this dataset") }}</p>
+                    {% endif %}
+                    {% endblock %}
+                </div>
+
+                <div class="col-md-4">
+                    {% block resources %}
+                    {% if package.resources and not hide_resources %}
+                    {% block resources_outer %}
+                    <div class="d-flex flex-column">
+                        <small class="text-muted mb-2">{{ _('Available Formats:') }}</small>
+                        {% block resources_inner %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for resource in h.dict_list_reduce(package.resources, 'format') %}
+                            <a href="{{ h.url_for(package.type ~ '.read', id=package.name) }}"
+                                class="badge"
+                                data-format="{{ resource.lower() }}">
+                                {{ resource }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endblock %}
+                    </div>
+                    {% endblock %}
+                    {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</li>
+{% endblock %}
