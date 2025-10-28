@@ -15,18 +15,18 @@ Example:
 
 {% block package_item %}
 <li class="">
-    <!-- HO Works -->
-    {% block content %}
     <div class="row align-items-center mb-4">
-
         <div class="card shadow-sm p-3">
             <div class="row mt-1">
                 {% if package.organization and package.organization.image_url %}
                 <div class="col-md-2 mt-4">
-                    <img src="{{ package.organization.image_url }}" alt="{{ package.organization.title }}" class="img-fluid"
-                        style="max-height: 60px;">
+                    <img src="{{ package.organization.image_url }}" 
+                         alt="{{ package.organization.title }}" 
+                         class="img-fluid"
+                         style="max-height: 60px;">
                 </div>
                 {% endif %}
+
                 <div class="col p-3">
                     {% block heading %}
                     {% block heading_private %}
@@ -37,25 +37,30 @@ Example:
                     </span>
                     {% endif %}
                     {% endblock %}
+
                     {% block heading_title %}
-                    <h2 class="h5 mb-0">
-                        <a href="{{ h.url_for('%s.read' % package.type, id=package.name) }}" class="text-decoration-none"
-                            title="{{ title }}">
-                            {{title|truncate(80)}}
+                    <h2 class="h5 mb-1">
+                        <a href="{{ h.url_for('%s.read' % package.type, id=package.name) }}" 
+                           class="text-decoration-none" 
+                           title="{{ title }}">
+                            {{ title|truncate(80) }}
                         </a>
                     </h2>
 
-                     <!-- NUEVO: organizacion y fecha-->
-                    <div class="text-muted small mb-2">
+                    <!-- NUEVO: Institución + última actualización en una sola línea -->
+                    <div class="text-muted small mb-3 d-flex align-items-center flex-wrap">
                         {% if package.organization %}
-                            <i class="fa fa-university"></i> {{ package.organization.title }}
+                            <span class="me-2">
+                                <i class="fa fa-university"></i> <strong>Institución:</strong>  {{ package.organization.title }}
+                            </span>
                         {% endif %}
                         {% if package.metadata_modified %}
-                            &nbsp;|&nbsp;
-                            <i class="fa fa-clock"></i> {{ h.render_datetime(package.metadata_modified) }}
+                            <span>
+                                <i class="fa fa-clock"></i> <strong>Última Actualización:</strong> {{ h.render_datetime(package.metadata_modified, date_format='%d %b %Y') }}
+                            </span>
                         {% endif %}
                     </div>
-                    <!-- FIN NUEVO -->
+                    <!--FIN NUEVO -->
 
                     {% endblock %}
                     {% block heading_meta %}
@@ -66,19 +71,12 @@ Example:
                     {% endif %}
                     {% endblock %}
                     {% endblock %}
-                    <div class="row mt-3">
-                        <div class="col-md-8">
-                            {% block notes %}
-                            {% if notes %}
-                            <div class="text-muted">{{ notes|urlize }}</div>
-                            {% else %}
-                            <p class="text-muted fst-italic">{{ h.humanize_entity_type('package', package.type, 'no
-                                description') or _("There is no description for this dataset") }}</p>
-                            {% endif %}
-                            {% endblock %}
-                        </div>
 
-                        <div class="col-md-4">
+                    
+                    
+                    
+                    <div class="row mt-2">
+                        <div class="col-md-12">
                             {% block resources %}
                             {% if package.resources and not hide_resources %}
                             {% block resources_outer %}
@@ -88,8 +86,8 @@ Example:
                                 <div class="d-flex flex-wrap gap-2">
                                     {% for resource in h.dict_list_reduce(package.resources, 'format') %}
                                     <a href="{{ h.url_for(package.type ~ '.read', id=package.name) }}"
-                                        class="badge"
-                                        data-format="{{ resource.lower() }}">
+                                       class="badge"
+                                       data-format="{{ resource.lower() }}">
                                         {{ resource }}
                                     </a>
                                     {% endfor %}
@@ -105,7 +103,5 @@ Example:
             </div>
         </div>
     </div>
-
-    {% endblock %}
 </li>
 {% endblock %}
