@@ -54,6 +54,8 @@ Example:
                                 <i class="fa fa-university"></i> <strong>Institución:</strong>  {{ package.organization.title }}
                             </span>
                         {% endif %}
+                    </div>
+                    <div class="text-muted small mb-3 d-flex align-items-center flex-wrap">
                         {% if package.metadata_modified %}
                             <span>
                                 <i class="fa fa-clock"></i> <strong>Última Actualización:</strong> {{ h.render_datetime(package.metadata_modified, date_format='%d %b %Y') }}
@@ -61,14 +63,6 @@ Example:
                         {% endif %}
                     </div>
                     <!--FIN NUEVO -->
-
-                    {% endblock %}
-                    {% block heading_meta %}
-                    {% if package.get('state', '').startswith('draft') %}
-                    <span class="badge bg-info">{{ _('Draft') }}</span>
-                    {% elif package.get('state', '').startswith('deleted') %}
-                    <span class="badge bg-danger">{{ _('Deleted') }}</span>
-                    {% endif %}
                     {% endblock %}
                     {% endblock %}
 
@@ -99,6 +93,16 @@ Example:
                             {% endblock %}
                         </div>
                     </div>
+                </div>
+
+                <div class="col">
+                    {% block heading_meta %}
+                    {% if package.get('state', '').startswith('draft') %}
+                    <span class="badge bg-info">{{ _('Draft') }}</span>
+                    {% elif package.get('state', '').startswith('deleted') %}
+                    <span class="badge bg-danger">{{ _('Deleted') }}</span>
+                    {% endif %}
+                    {% endblock %}
                 </div>
             </div>
         </div>
