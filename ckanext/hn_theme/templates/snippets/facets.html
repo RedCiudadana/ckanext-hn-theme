@@ -1,36 +1,32 @@
 {# 
   facets.html - versión personalizada para ckanext-hn-theme
-  Este snippet genera las secciones del aside: Organizaciones, Grupos, Etiquetas, etc.
+  Usa los datos reales del buscador de CKAN (Organizaciones, Grupos, Etiquetas, etc.)
 #}
 
+<div class="custom-facets space-y-3">
 
-{% set show_more_facets = g.show_more_facets or 10 %}
-
-<!-- FACETS DEBUG: {{ facet_titles|length }} facets found -->
-
-<div class="custom-facets">
   {% for facet in facet_titles %}
     {% set title = facet_titles[facet] %}
-    {% set items = search_facets[facet].items() if search_facets[facet] else [] %}
-    {% if items %}
-      <section class="facet-section card mb-3 shadow-sm rounded-xl">
-        <div class="facet-header bg-gray-100 p-2 border-b border-gray-300">
-          <h4 class="text-base font-semibold text-gray-800">{{ title }}</h4>
+    {% set facet_data = search_facets.get(facet) %}
+    {% if facet_data and facet_data.items() %}
+      <section class="facet-section border border-gray-200 rounded-lg shadow-sm">
+        <div class="facet-header bg-gray-100 px-3 py-2 border-b border-gray-300">
+          <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">{{ title }}</h4>
         </div>
-        <ul class="facet-list list-unstyled m-0 p-2">
-          {% for item_name, item_data in items %}
-            <li class="facet-item d-flex justify-between align-items-center py-1">
+
+        <ul class="facet-list list-unstyled p-2 m-0">
+          {% for item_name, item_data in facet_data.items() %}
+            <li class="facet-item flex justify-between items-center py-1">
               <a href="{{ h.remove_url_param(facet, item_name) if item_data.active else h.add_url_param(facet, item_name) }}"
-                 class="facet-link {% if item_data.active %}active text-blue-600 font-bold{% else %}text-gray-700{% endif %}">
+                 class="facet-link {% if item_data.active %}text-blue-700 font-semibold{% else %}text-gray-700 hover:text-blue-600{% endif %}">
                 {{ h.truncate(item_name, 30) }}
               </a>
-              <span class="facet-count text-sm text-gray-500">({{ item_data.count }})</span>
+              <span class="facet-count text-xs text-gray-500">({{ item_data.count }})</span>
             </li>
           {% endfor %}
         </ul>
 
-        {# Botón "Mostrar más" #}
-        {% if items|length > show_more_facets %}
+        {% if facet_data.items()|length > (show_more_facets or 10) %}
           <div class="facet-show-more p-2 text-right">
             <a href="{{ h.more_facets_link(facet) }}" class="text-sm text-blue-500 hover:underline">
               Mostrar más {{ title.lower() }}
@@ -40,4 +36,5 @@
       </section>
     {% endif %}
   {% endfor %}
+
 </div>

@@ -5,7 +5,11 @@
 
 {% ckan_extends %}
 
-{# Este bloque es el que realmente contiene los facets de búsqueda #}
+{# ===============================
+  Bloque correcto para sobreescribir el sidebar de filtros
+  Mantiene los datos reales de CKAN pero usa nuestro snippet personalizado
+================================= #}
+
 {% block search_facets %}
   {% snippet "snippets/facets.html",
       facets=c.facets,
