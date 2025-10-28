@@ -3,10 +3,13 @@
   Este snippet genera las secciones del aside: Organizaciones, Grupos, Etiquetas, etc.
 #}
 
+{% ckan_extends %}
+
 {% set show_more_facets = g.show_more_facets or 10 %}
 
+<!-- FACETS DEBUG: {{ facet_titles|length }} facets found -->
+
 <div class="custom-facets">
- <!-- custom facets 1-->
   {% for facet in facet_titles %}
     {% set title = facet_titles[facet] %}
     {% set items = search_facets[facet].items() if search_facets[facet] else [] %}
