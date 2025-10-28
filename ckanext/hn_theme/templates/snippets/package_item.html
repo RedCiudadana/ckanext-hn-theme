@@ -44,6 +44,19 @@ Example:
                             {{title|truncate(80)}}
                         </a>
                     </h2>
+
+                     <!-- NUEVO: organizacion y fecha-->
+                    <div class="text-muted small mb-2">
+                        {% if package.organization %}
+                            <i class="fa fa-university"></i> {{ package.organization.title }}
+                        {% endif %}
+                        {% if package.metadata_modified %}
+                            &nbsp;|&nbsp;
+                            <i class="fa fa-clock"></i> {{ h.render_datetime(package.metadata_modified) }}
+                        {% endif %}
+                    </div>
+                    <!-- FIN NUEVO -->
+
                     {% endblock %}
                     {% block heading_meta %}
                     {% if package.get('state', '').startswith('draft') %}
