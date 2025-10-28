@@ -17,14 +17,14 @@ Example:
 <li class="">
     <!-- HO Works -->
     {% block content %}
-    <div class="row align-items-center mb-4">
+    <div class="row card shadow-sm align-items-center mb-4">
         {% if package.organization and package.organization.image_url %}
         <div class="col-auto">
             <img src="{{ package.organization.image_url }}" alt="{{ package.organization.title }}" class="img-fluid"
                 style="max-height: 60px;">
         </div>
         {% endif %}
-        <div class="col card shadow-sm p-3">
+        <div class="col p-3">
             {% block heading %}
             {% block heading_private %}
             {% if package.private %}
