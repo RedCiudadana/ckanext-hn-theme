@@ -1,37 +1,30 @@
 {# 
-  Plantilla personalizada para la lista de datasets (ckanext-hn-theme)
-  Ruta: /dataset
-  Sobrescribe el aside derecho (secondary_content)
+  CKAN HN Theme - personalización segura del aside derecho en /dataset
+  Este template solo añade contenido extra al aside, sin alterar la estructura base.
 #}
 
 {% ckan_extends %}
 
 {% block secondary_content %}
-  <aside class="module module-narrow custom-sidebar">
+  {{ super() }}  {# ← mantiene el contenido original del aside (filtros, etc.) #}
 
-    {# Sidebar original de CKAN: filtros de búsqueda #}
-    {% snippet "snippets/facets.html", facets=facets, search_facets=search_facets %}
-
-    {# Contenido adicional personalizado #}
-    <div class="custom-widget">
+  <aside class="module module-narrow custom-sidebar" style="margin-top: 1em;">
+    <div class="module-content">
       <h3 class="heading">Información adicional</h3>
-      <div class="content">
-        <p>Explora los datos abiertos de Honduras.</p>
-        <ul>
-          <li><a href="https://datos.gob.hn/">Portal principal</a></li>
-          <li><a href="/organization">Organizaciones</a></li>
-          <li><a href="/group">Categorías</a></li>
-        </ul>
-      </div>
+      <p>Explora los datos abiertos de Honduras.</p>
+      <ul>
+        <li><a href="https://datos.gob.hn/" target="_blank">Portal principal</a></li>
+        <li><a href="/organization">Organizaciones</a></li>
+        <li><a href="/group">Categorías</a></li>
+      </ul>
     </div>
 
-    <div class="custom-widget">
+    <div class="module-content">
       <h3 class="heading">Estadísticas</h3>
-      <div class="content">
-        <p>Total de conjuntos de datos: {{ count or 0 }}</p>
-        <p>Filtros aplicados: {{ active_facets|length if active_facets is defined else 0 }}</p>
-      </div>
+      <p>Total de conjuntos de datos: {{ count or 0 }}</p>
+      {% if active_facets is defined and active_facets %}
+        <p>Filtros aplicados: {{ active_facets|length }}</p>
+      {% endif %}
     </div>
-
   </aside>
 {% endblock %}
