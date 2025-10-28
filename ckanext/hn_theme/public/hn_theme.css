@@ -47,10 +47,12 @@ body {
   display: none;
 }
 
-.site-footer {
+.site-footer, .cc-footer {
   color: white;
   background-color: var(--hn-fifth-color);
 }
+
+
 
 .site-footer a,
 .site-footer strong,
