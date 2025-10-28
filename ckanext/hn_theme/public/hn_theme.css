@@ -823,3 +823,29 @@ body {
 .custom-dataset-card .badge[data-format*=rdf] {
   background-color: #6f42c1;
 }
+
+/* facets*/
+
+.custom-facets .facet-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.custom-facets .facet-header {
+  background-color: #f4f4f4;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-facets .facet-list li {
+  padding: 4px 8px;
+}
+
+.custom-facets .facet-link {
+  text-decoration: none;
+}
+
+.custom-facets .facet-link.active {
+  color: #0056b3;
+}

@@ -6,25 +6,7 @@
 {% ckan_extends %}
 
 {% block secondary_content %}
-  {{ super() }}  {# ← mantiene el contenido original del aside (filtros, etc.) #}
+  {{ super() }}  {#  mantiene el contenido original del aside (filtros, etc.) #}
 
-  <aside class="module module-narrow custom-sidebar" style="margin-top: 1em;">
-    <div class="module-content">
-      <h3 class="heading">Información adicional</h3>
-      <p>Explora los datos abiertos de Honduras.</p>
-      <ul>
-        <li><a href="https://datos.gob.hn/" target="_blank">Portal principal</a></li>
-        <li><a href="/organization">Organizaciones</a></li>
-        <li><a href="/group">Categorías</a></li>
-      </ul>
-    </div>
-
-    <div class="module-content">
-      <h3 class="heading">Estadísticas</h3>
-      <p>Total de conjuntos de datos: {{ count or 0 }}</p>
-      {% if active_facets is defined and active_facets %}
-        <p>Filtros aplicados: {{ active_facets|length }}</p>
-      {% endif %}
-    </div>
-  </aside>
+  
 {% endblock %}
