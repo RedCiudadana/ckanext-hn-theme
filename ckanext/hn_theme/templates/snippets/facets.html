@@ -6,7 +6,7 @@
 {% set show_more_facets = g.show_more_facets or 10 %}
 
 <div class="custom-facets">
-
+ <!-- custom facets-->
   {% for facet in facet_titles %}
     {% set title = facet_titles[facet] %}
     {% set items = search_facets[facet].items() if search_facets[facet] else [] %}
