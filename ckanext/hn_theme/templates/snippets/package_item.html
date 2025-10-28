@@ -64,38 +64,7 @@ Example:
                     </div>
                     <!--FIN NUEVO -->
                     {% endblock %}
-                    {% endblock %}
 
-                    
-                    
-                    
-                    <div class="row mt-2">
-                        <div class="col-md-12">
-                            {% block resources %}
-                            {% if package.resources and not hide_resources %}
-                            {% block resources_outer %}
-                            <div class="d-flex flex-column">
-                                <small class="text-muted mb-2">{{ _('Available Formats:') }}</small>
-                                {% block resources_inner %}
-                                <div class="d-flex flex-wrap gap-2">
-                                    {% for resource in h.dict_list_reduce(package.resources, 'format') %}
-                                    <a href="{{ h.url_for(package.type ~ '.read', id=package.name) }}"
-                                       class="badge"
-                                       data-format="{{ resource.lower() }}">
-                                        {{ resource }}
-                                    </a>
-                                    {% endfor %}
-                                </div>
-                                {% endblock %}
-                            </div>
-                            {% endblock %}
-                            {% endif %}
-                            {% endblock %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
                     {% block heading_meta %}
                     {% if package.get('state', '').startswith('draft') %}
                     <span class="badge bg-info">{{ _('Draft') }}</span>
@@ -103,7 +72,31 @@ Example:
                     <span class="badge bg-danger">{{ _('Deleted') }}</span>
                     {% endif %}
                     {% endblock %}
+                    {% endblock %}
                 </div>
+                <div class="col-md-3">
+                    {% block resources %}
+                    {% if package.resources and not hide_resources %}
+                    {% block resources_outer %}
+                    <div class="d-flex flex-column">
+                        <small class="text-muted mb-2">{{ _('Available Formats:') }}</small>
+                        {% block resources_inner %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for resource in h.dict_list_reduce(package.resources, 'format') %}
+                            <a href="{{ h.url_for(package.type ~ '.read', id=package.name) }}"
+                                class="badge"
+                                data-format="{{ resource.lower() }}">
+                                {{ resource }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endblock %}
+                    </div>
+                    {% endblock %}
+                    {% endif %}
+                    {% endblock %}
+                </div>
+
             </div>
         </div>
     </div>
