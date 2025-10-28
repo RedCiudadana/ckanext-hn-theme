@@ -11,7 +11,6 @@ Example:
 
 #}
 {% set title = package.title or package.name %}
-<!-- content-test -->
 {% set notes = h.markdown_extract(package.notes, extract_length=180) %}
 
 {% block package_item %}
