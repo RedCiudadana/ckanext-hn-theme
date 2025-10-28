@@ -6,7 +6,15 @@
 {% ckan_extends %}
 
 {% block secondary_content %}
-  {{ super() }}  {#  mantiene el contenido original del aside (filtros, etc.) #}
+  <aside class="module module-narrow custom-sidebar">
 
-  
+    {# FORZAMOS A USAR TU SNIPPET EN LUGAR DEL ORIGINAL #}
+    {% snippet "snippets/facets.html", facets=facets, search_facets=search_facets %}
+
+    <div class="custom-widget">
+      <h3 class="heading">Información adicional</h3>
+      <p>Explora los datos abiertos de Honduras.</p>
+    </div>
+
+  </aside>
 {% endblock %}
