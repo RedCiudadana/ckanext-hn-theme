@@ -16,10 +16,10 @@ Example:
 {% block package_item %}
 <li class="">
     <div class="row align-items-center mb-4">
-        <div class="card shadow-sm p-3">
+        <div class="card shadow-sm">
             <div class="row mt-1">
                 {% if package.organization and package.organization.image_url %}
-                <div class="col-md-2 mt-4">
+                <div class="col-md-2 mt-4 pt-2">
                     <img src="{{ package.organization.image_url }}" 
                          alt="{{ package.organization.title }}" 
                          class="img-fluid"
@@ -48,14 +48,14 @@ Example:
                     </h2>
 
                     <!-- NUEVO: Institución + última actualización en una sola línea -->
-                    <div class="text-muted small mb-3 d-flex align-items-center flex-wrap">
+                    <div class="text-muted small mt-2 d-flex align-items-center flex-wrap">
                         {% if package.organization %}
                             <span class="me-2">
                                 <i class="fa fa-university"></i> <strong>Institución:</strong>  {{ package.organization.title }}
                             </span>
                         {% endif %}
                     </div>
-                    <div class="text-muted small mb-3 d-flex align-items-center flex-wrap">
+                    <div class="text-muted small mb-1 d-flex align-items-center flex-wrap">
                         {% if package.metadata_modified %}
                             <span>
                                 <i class="fa fa-clock"></i> <strong>Última Actualización:</strong> {{ h.render_datetime(package.metadata_modified, date_format='%d %b %Y') }}
@@ -74,7 +74,7 @@ Example:
                     {% endblock %}
                     {% endblock %}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 pt-5">
                     {% block resources %}
                     {% if package.resources and not hide_resources %}
                     {% block resources_outer %}
