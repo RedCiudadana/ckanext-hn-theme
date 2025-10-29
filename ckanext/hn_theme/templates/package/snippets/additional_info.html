@@ -97,9 +97,9 @@
         {% if pkg_dict.extras %}
           {% for extra in pkg_dict.extras %}
             {# en CKAN extras suelen ser dicts con 'key' y 'value' #}
-            {% if extra.key == 'periodicidad' %}
+            {% if extra.key == 'frequency' %}
               {% set periodicidad_val = extra.value %}
-            {% elif extra.key == 'diccionario_datos' %}
+            {% elif extra.key == 'data_dictionary' %}
               {% set diccionario_val = extra.value %}
             {% endif %}
           {% endfor %}
@@ -109,6 +109,21 @@
           <th scope="row" class="dataset-label">{{ _("Periodicity") }}</th>
           {% if periodicidad_val %}
             <td class="dataset-details">{{ periodicidad_val }}</td>
+          {% else %}
+            <td class="dataset-details"> No disponible</td>
+          {% endif %}
+        </tr>
+
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Data Dictionary") }}</th>
+          {% if diccionario_val %}
+            <td class="dataset-details">
+              {% if h.is_url(diccionario_val) %}
+                <a href="{{ diccionario_val }}" target="_blank" rel="noopener">{{ _('View dictionary') }}</a>
+              {% else %}
+                {{ diccionario_val }}
+              {% endif %}
+            </td>
           {% else %}
             <td class="dataset-details"> No disponible</td>
           {% endif %}
