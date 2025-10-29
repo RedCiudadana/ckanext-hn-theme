@@ -15,10 +15,10 @@
     {% block page_heading %}
     {{ h.dataset_display_name(pkg) }}
     {% if pkg.state.startswith('draft') %}
-    <span class="badge bg-info">{{ _('Draft') }}</span>
+      <span class="badge bg-info">{{ _('Draft') }}</span>
     {% endif %}
     {% if pkg.state == 'deleted' %}
-    <span class="badge bg-info">{{ _('Deleted') }}</span>
+      <span class="badge bg-info">{{ _('Deleted') }}</span>
     {% endif %}
     {% endblock %}
 </h1>
@@ -29,8 +29,10 @@
 </div>
       {% endif %}
     {% endblock %}
-  {% endblock %}
 #}
+
+  {% endblock %}
+
   
   {% block package_additional_info %}
     {% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
