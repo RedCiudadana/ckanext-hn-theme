@@ -863,3 +863,55 @@ body {
 .custom-additional-info.table .dataset-label{
   width: 33%;
 }
+/* nuevo estilo */
+/* Estilo para el logo */
+.org-logo img.org-avatar {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border: 2px solid #eee;
+}
+
+/* Título centrado */
+.org-title {
+    font-size: 1.25rem;
+    margin: 10px 0;
+}
+
+/* Contenedor de estadísticas */
+.org-stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0;
+    gap: 8px;
+}
+
+.stat-card {
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 10px 8px;
+    text-align: center;
+    flex: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Botón de seguir centrado */
+.follow-button-container .btn {
+    width: 100%;
+    font-size: 0.8
