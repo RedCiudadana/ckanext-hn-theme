@@ -9,6 +9,7 @@ Example:
 
 #}
 
+{% set url = h.url_for(pkg.organization.type + '.read', id=pkg.organization.name, ) %}
 {% block package_info %}
 <!-- i was info-->
   {% if pkg %}
@@ -19,7 +20,7 @@ Example:
             {% block heading %}
               <div class="image">
           <a href="{{ url }}">
-            <img src="{{ pkg.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" width="40" alt="{{ pkg.name }}" />
+            <img src="{{ pkg.organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" width="40" alt="{{ pkg.organization.name }}" />
           </a>
         </div>
         <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
