@@ -31,11 +31,11 @@ Example:
               {% block heading %}
                 <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
 
-                <h3 class="heading">{{ org.title or org.name }}
+                <span>{{ org.title or org.name }}
                 {% if org.state == 'deleted' %}
                   [{{ _('Deleted') }}]
                 {% endif %}
-                </h3>
+                </span>
 
               {% endblock %}
 
