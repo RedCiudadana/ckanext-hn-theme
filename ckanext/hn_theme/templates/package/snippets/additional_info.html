@@ -73,14 +73,6 @@
           </tr>
         {% endif %}
 
-        <tr>
-            <th scope="row" class="dataset-label">Licencia</th>
-            {% if pkg_dict.license_title %}
-              <td class="dataset-details"> <a href="{{ pkg.license_url }}" target="_blank">{{ pkg.license_title }}</a></td>
-            {% else %}
-              <td class="dataset-details"> No disponible</td>
-            {% endif %}
-          </tr>
 
 
       {% block extras scoped %}
