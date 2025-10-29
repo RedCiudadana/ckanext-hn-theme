@@ -15,34 +15,9 @@ Example:
       <div class="module context-info">
         <div class="module-content">
           {% block package_info_inner %}
-            
-            <div class="row">
-              <div class="col-3">
-                  {% block image %}
-                    <div class="image">
-                      <a href="{{ url }}">
-                        <img src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" width="60" alt="{{ organization.name }}" />
-                      </a>
-                    </div>
-                  {% endblock %}
-              </div>
-
-              <div class="col-9">
-                {% block heading %}
-                  <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
-                {% endblock %}
-                
-                {% block heading %}
-                  <h3 class="heading">{{ organization.title or organization.name }}
-                    {% if organization.state == 'deleted' %}
-                      [{{ _('Deleted') }}]
-                    {% endif %}
-                  </h3>
-                {% endblock %}  
-              </div>
-            </div>
-
-            {#
+            {% block heading %}
+              <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
+            {% endblock %}
             {% block nums %}
               <div class="nums">
                 <dl>
@@ -59,8 +34,6 @@ Example:
                 </div>
               {% endif %}
             {% endblock %}
-             #}     
-
           {% endblock %}
         </div>
       </div>
