@@ -855,7 +855,11 @@ body {
     position: relative;
     padding: 10px 10px 10px 60px;
     margin-bottom: 0px;
-    /* border-radius: 3px; */
+    border-radius: none; 
     height: 50px;
-    border-left: 2px solid #eee;
+    border-right: 2px solid #eee;
+}
+
+.row-resource{
+  border-left: 2px solid #eee;
 }

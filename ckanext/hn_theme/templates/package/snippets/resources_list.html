@@ -13,7 +13,7 @@ Example:
   <h3> Descargas</h3>
   {% block resource_list %}
     {% if resources %}
-      <div class="row mb-1">
+      <div class="row mb-1 row-resource">
         {% block resource_list_inner %}
           {% for resource in resources %}
             {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
