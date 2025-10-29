@@ -859,3 +859,7 @@ body {
     height: 50px;
     border-left: 2px solid #eee;
 }
+
+.custom-additional-info.table .dataset-label{
+  width: 33%;
+}
