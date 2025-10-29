@@ -10,7 +10,7 @@
     </thead>
     <tbody>
       {% block package_additional_info %}
-        {% if pkg_dict.url %}
+        {#{% if pkg_dict.url %}#}
           <tr>
             <th scope="row" class="dataset-label">{{ _('Source') }}</th>
             {% if h.is_url(pkg_dict.url) %}
@@ -19,7 +19,7 @@
               <td class="dataset-details" property="foaf:homepage">{{ pkg_dict.url }}</td>
             {% endif %}
           </tr>
-        {% endif %}
+        {#{% endif %}#}
 
         {% if pkg_dict.author_email %}
           <tr>
