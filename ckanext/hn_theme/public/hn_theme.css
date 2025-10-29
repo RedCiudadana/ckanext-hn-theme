@@ -855,7 +855,7 @@ body {
     position: relative;
     padding: 10px 10px 10px 60px;
     margin-bottom: 0px;
-    border-radius: none; 
+    border-radius: none !important; 
     height: 50px;
     border-right: 2px solid #eee;
 }
