@@ -1,0 +1,77 @@
+{# 
+  Personalized facet list with modern styling
+  Place in: your_theme/templates/snippets/facet_list.html
+#}
+{% block facet_list %}
+  {% set hide_empty = hide_empty or false %}
+  {% with items = items or h.get_facet_items_dict(name) %}
+    {% if items or not hide_empty %}
+      {% if within_tertiary %}
+        {% set nav_class = 'nav nav-pills nav-stacked' %}
+        {% set nav_item_class = ' ' %}
+        {% set wrapper_class = 'nav-facet nav-facet-tertiary' %}
+      {% else %}
+        {% set wrapper_class = 'module module-narrow module-shallow facet-module' %}
+      {% endif %}
+
+      <section class="{{ wrapper_class }}">
+        {% block facet_list_heading %}
+          <h2 class="module-heading facet-title">
+            <!-- Opcional: ícono personalizado por tipo de faceta -->
+            {% if name == 'organization' %}
+              <i class="icon-medium icon-building"></i>
+            {% elif name == 'tags' %}
+              <i class="icon-medium icon-tag"></i>
+            {% elif name == 'res_format' %}
+              <i class="icon-medium icon-file"></i>
+            {% else %}
+              <i class="icon-medium icon-filter"></i>
+            {% endif %}
+            {% set title = title or h.get_facet_title(name) %}
+            {{ title }}
+          </h2>
+        {% endblock %}
+
+        {% block facet_list_items %}
+          {% with items = items or h.get_facet_items_dict(name) %}
+            {% if items %}
+              <nav>
+                <ul class="{{ nav_class or 'facet-list unstyled' }}">
+                  {% for item in items %}
+                    {% set href = h.remove_url_param(name, item.name, extras=extras, alternative_url=alternative_url) if item.active else h.add_url_param(new_params={name: item.name}, extras=extras, alternative_url=alternative_url) %}
+                    {% set label = label_function(item) if label_function else item.display_name %}
+                    {% set label_truncated = h.truncate(label, 24) if not label_function else label %}
+                    {% set count = item['count'] %}
+                    <li class="facet-item{% if item.active %} active{% endif %}">
+                      <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
+                        <span class="facet-label">{{ label_truncated }}</span>
+                        <span class="facet-count badge">{{ count }}</span>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </nav>
+
+              {# Botón "Mostrar más / Menos" con mejor estilo #}
+              <div class="facet-footer text-center">
+                {% if h.get_param_int('_%s_limit' % name) %}
+                  {% if h.has_more_facets(name) %}
+                    <a href="{{ h.remove_url_param('_%s_limit' % name, replace=0, extras=extras, alternative_url=alternative_url) }}" 
+                       class="btn btn-xs btn-default">{{ _('Show More {facet_type}').format(facet_type=title) }}</a>
+                  {% endif %}
+                {% else %}
+                  <a href="{{ h.remove_url_param('_%s_limit' % name, extras=extras, alternative_url=alternative_url) }}" 
+                     class="btn btn-xs btn-default">{{ _('Show Only Popular {facet_type}').format(facet_type=title) }}</a>
+                {% endif %}
+              </div>
+            {% else %}
+              <p class="module-content empty text-muted text-center">
+                {{ _('No {facet_type} found').format(facet_type=title|lower) }}
+              </p>
+            {% endif %}
+          {% endwith %}
+        {% endblock %}
+      </section>
+    {% endif %}
+  {% endwith %}
+{% endblock %}
