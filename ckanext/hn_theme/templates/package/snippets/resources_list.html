@@ -10,23 +10,17 @@ Example:
 
 #}
 <section id="dataset-resources" class="resources">
-    <!-- i was rl-->
-  <h3>Descargas</h3>
-                <!-- nuevo li custom-->
+  <h3> Descargas</h3>
   {% block resource_list %}
     {% if resources %}
       <ul class="{% block resource_list_class %}resource-list{% endblock %}">
-        <!-- li custom before inner block-->         
         {% block resource_list_inner %}
-        <!-- li custom inner block-->
-          {% for resource in resources %}            
-            
-
+          {% for resource in resources %}
+            {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
           {% endfor %}
         {% endblock %}
       </ul>
     {% else %}
-      <!-- else block-->
       {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
           {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
             <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
@@ -35,5 +29,5 @@ Example:
           <p class="empty">{{ _('This dataset has no data') }}</p>
       {% endif %}
     {% endif %}
-    {% endblock %}
+    {% endblock %}
 </section>
