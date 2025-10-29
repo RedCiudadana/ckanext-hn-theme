@@ -16,7 +16,12 @@ Example:
         <div class="module-content">
           {% block package_info_inner %}
             {% block heading %}
-              <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
+              <div class="image">
+          <a href="{{ url }}">
+            <img src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" width="40" alt="{{ organization.name }}" />
+          </a>
+        </div>
+        <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
             {% endblock %}
             {% block nums %}
               <div class="nums">
