@@ -89,6 +89,31 @@
             <td class="dataset-details"> No disponible</td>
           {% endif %}
         </tr>
+
+
+                {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
+        {% set periodicidad_val = None %}
+        {% set diccionario_val = None %}
+        {% if pkg_dict.extras %}
+          {% for extra in pkg_dict.extras %}
+            {# en CKAN extras suelen ser dicts con 'key' y 'value' #}
+            {% if extra.key == 'periodicidad' %}
+              {% set periodicidad_val = extra.value %}
+            {% elif extra.key == 'diccionario_datos' %}
+              {% set diccionario_val = extra.value %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Periodicity") }}</th>
+          {% if periodicidad_val %}
+            <td class="dataset-details">{{ periodicidad_val }}</td>
+          {% else %}
+            <td class="dataset-details"> No disponible</td>
+          {% endif %}
+        </tr>
+
           <!-- FIN NUEVOS CAMPOS -->
 
       {% block extras scoped %}
