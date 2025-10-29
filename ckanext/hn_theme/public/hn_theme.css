@@ -849,3 +849,10 @@ body {
 .custom-facets .facet-link.active {
   color: #0056b3;
 }
+
+
+@media (min-width: 768px) {
+  .wrapper:before {    
+    width: 34% !important;    
+  }  
+}
