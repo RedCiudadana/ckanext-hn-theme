@@ -857,9 +857,5 @@ body {
     margin-bottom: 0px;
     border-radius: none !important; 
     height: 50px;
-    border-right: 2px solid #eee;
-}
-
-.row-resource{
-  border-left: 2px solid #eee;
+    border-left: 2px solid #eee;
 }
