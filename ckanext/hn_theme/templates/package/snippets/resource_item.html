@@ -51,14 +51,6 @@
         </a>
       </li>
       {% endif %}
-      {% if can_edit %}
-      <li>
-        <a href="{{ h.url_for(action='resource.edit', id=pkg.name, resource_id=res.id) }}">
-          <i class="icon-edit"></i>
-          {{ _('Edit') }}
-        </a>
-      </li>
-      {% endif %}
       {% endblock %}
     </ul>
   </div>
