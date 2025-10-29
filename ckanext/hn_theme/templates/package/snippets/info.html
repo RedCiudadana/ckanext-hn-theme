@@ -18,11 +18,13 @@ Example:
         <div class="module-content">
           {% block package_info_inner %}
             {% block heading %}
+            {% block image %}
               <div class="image">
-          <a href="{{ url }}">
-            <img src="{{ org.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" width="40" alt="{{ org.name }}" />
-          </a>
-        </div>
+                <a href="{{ url }}">
+                  <img src="{{ org.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" width="40" alt="{{ org.name }}" />
+                </a>
+              </div>
+            {% endblock %}
         <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
             {% endblock %}
             {% block nums %}
