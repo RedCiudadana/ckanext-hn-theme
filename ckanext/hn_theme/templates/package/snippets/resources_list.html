@@ -9,29 +9,41 @@ Example:
   {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
 
 #}
-{% ckan_extends %}
-
-{% block resource_list %}
+<section id="dataset-resources" class="resources">
+    <!-- i was rl-->
   <h3>Descargas</h3>
-  {% if resources %}
-    <ul class="resource-list">
-      {% for res in resources %}
-        {% set can_edit = h.check_access('package_update', {'id': pkg.id }) %}
-        {% set url_action = 'resource_edit' if url_is_edit and can_edit else 'resource_read' %}
-        {% set url = h.url_for(controller='package', action=url_action, id=pkg.name, resource_id=res.id) %}
-
-        <li class="resource-item" data-id="{{ res.id }}">
-          <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
-            {{ h.resource_display_name(res) | truncate(50) }}
-            <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">
-              {{ h.get_translated(res, 'format') }}
-            </span>
-            {{ h.popular('views', res.tracking_summary.total, min=10) }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="empty">{{ _('Este conjunto de datos no tiene recursos.') }}</p>
-  {% endif %}
-{% endblock %}
+                <!-- nuevo li custom-->
+  {% block resource_list %}
+    {% if resources %}
+      <ul class="{% block resource_list_class %}resource-list{% endblock %}">
+        <!-- li custom before inner block-->         
+        {% block resource_list_inner %}
+        <!-- li custom inner block-->
+          {% for resource in resources %}
+            {% set res=resource %}
+            {% set can_edit = h.check_access('package_update', {'id':pkg.id }) %}
+            {% set url_action = 'resource_edit' if url_is_edit and can_edit else 'resource_read' %}
+            {% set url = h.url_for(controller='package', action=url_action, id=pkg.name, resource_id=res.id) %}
+            <!-- li custom for-->
+            <li class="resource-item" data-id="{{ res.id }}">
+                <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+                    {{ h.resource_display_name(res) | truncate(50) }}<span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
+                    {{ h.popular('views', res.tracking_summary.total, min=10) }}
+                </a>
+                <!-- li custom-->
+            </li>
+          {% endfor %}
+        {% endblock %}
+      </ul>
+    {% else %}
+      <!-- else block-->
+      {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
+          {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
+            <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
+          {% endtrans %}
+      {% else %}
+          <p class="empty">{{ _('This dataset has no data') }}</p>
+      {% endif %}
+    {% endif %}
+    {% endblock %}
+</section>
