@@ -8,7 +8,7 @@ Example:
   {% snippet "package/snippets/info.html", pkg=pkg %}
 
 #}
-{% set org = pkg.organization %}
+
 {% set url = h.url_for(org.type + '.read', id=org.name, ) %}
 {% block package_info %}
 <!-- i was info-->
