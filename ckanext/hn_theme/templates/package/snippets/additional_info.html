@@ -82,25 +82,6 @@
             {% endif %}
           </tr>
 
-        <tr>
-            <th scope="row" class="dataset-label">Periodicidad</th>
-            {% if pkg_dict.frequency  %}
-              <td class="dataset-details">  {{ h.scheming_language_text(pkg.frequency) }}</td>
-            {% else %}
-              <td class="dataset-details"> No disponible</td>
-            {% endif %}
-         </tr>
-
-
-         <tr>
-            <th scope="row" class="dataset-label">Diccionario de Datos</th>
-              <td class="dataset-details">
-                {% for resource in pkg.resources %} 
-                <span>{{ resource.name }}</span>
-                {% endfor %}
-              </td>            
-         </tr>
-
 
       {% block extras scoped %}
         {% for extra in h.sorted_extras(pkg_dict.extras) %}
