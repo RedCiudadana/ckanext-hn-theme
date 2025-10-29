@@ -1,9 +1,58 @@
-<section class="module">
-    <h2>Faceta: {{ name }}</h2>
-    <p>¿Se está llamando este archivo? {{ '¡SÍ!' if name else 'NO' }}</p>
-    {% set items = h.get_facet_items_dict(name) %}
-    <p>Número de items: {{ items|length if items else '0' }}</p>
-    {% for item in items %}
-    <div>{{ item.display_name }} ({{ item.count }})</div>
+<div class="custom-facets space-y-4">
+
+    {% for facet_name in facets or [] %}
+    {% set title = facet_titles.get(facet_name) or h.get_facet_title(facet_name) %}
+    {% set facet_data = search_facets.get(facet_name) %}
+
+    {% if facet_data and facet_data.items %}
+    <section class="facet-section bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="facet-header px-4 py-3 bg-gray-50 border-b border-gray-200">
+            <h4 class="text-sm font-semibold text-gray-800 uppercase tracking-wide">
+                {{ title }}
+            </h4>
+        </div>
+
+        <ul class="facet-list p-0 m-0">
+            {% for item in facet_data.items %}
+            <li class="facet-item px-4 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
+                <a href="{{ h.remove_url_param(facet_name, item.name) if item.active else h.add_url_param(new_params={facet_name: item.name}) }}"
+                   class="flex justify-between items-center w-full text-sm text-gray-700 hover:text-blue-600
+                        {% if item.active %}text-blue-700 font-medium{% endif %}"
+                   title="{{ item.display_name if h.truncate(item.display_name, 30) != item.display_name else '' }}">
+                    <span class="truncate max-w-[160px]">
+                        {{ h.truncate(item.display_name, 30) }}
+                    </span>
+                    {% if item.active %}
+                    <span class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-600 rounded-full">
+                        {{ item.count }}
+                    </span>
+                    {% else %}
+                    <span class="text-xs text-gray-500">{{ item.count }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% if h.get_param_int('_%s_limit' % facet_name) %}
+        {% if h.has_more_facets(facet_name) %}
+        <div class="facet-show-more px-4 py-2 bg-gray-50 text-right border-t border-gray-200">
+            <a href="{{ h.remove_url_param('_%s_limit' % facet_name, replace=0) }}"
+               class="text-sm text-blue-600 hover:underline">
+                Mostrar más {{ title.lower() }}
+            </a>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="facet-show-more px-4 py-2 bg-gray-50 text-right border-t border-gray-200">
+            <a href="{{ h.remove_url_param('_%s_limit' % facet_name) }}"
+               class="text-sm text-blue-600 hover:underline">
+                Mostrar solo populares
+            </a>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
     {% endfor %}
-</section>
+
+</div>
