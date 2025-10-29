@@ -28,6 +28,7 @@
   {% block secondary_help_content %}{% endblock %}
 
   {% block package_info %}
+    {% set org = h.get_organization(pkg.organization.id) %}
     {% snippet 'package/snippets/info.html', pkg=pkg, org=org, am_following=am_following %}
   {% endblock %}
 
