@@ -83,20 +83,6 @@
               <td class="dataset-details"> No disponible</td>
             {% endif %}
           </tr>
-
-          <tr>
-            <th scope="row" class="dataset-label">{{ _("Data Dictionary") }}</th>
-            {% set data_dict = h.get_pkg_dict_value(pkg_dict, 'diccionario_datos') %}
-            {% if data_dict %}
-              {% if h.is_url(data_dict) %}
-                <td class="dataset-details"><a href="{{ data_dict }}" target="_blank">{{ _('View dictionary') }}</a></td>
-              {% else %}
-                <td class="dataset-details">{{ data_dict }}</td>
-              {% endif %}
-            {% else %}
-              <td class="dataset-details"> No disponible</td>
-            {% endif %}
-          </tr>
           <!-- FIN NUEVOS CAMPOS -->
 
       {% block extras scoped %}
