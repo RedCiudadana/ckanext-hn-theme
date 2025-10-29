@@ -51,7 +51,7 @@
             {% endblock %}
 
             {# --- Métricas: Seguidores, Datasets, Miembros --- #}
-            {% if show_nums %}
+            {# {% if show_nums %}
             {% block nums %}
             <div class="org-stats">
                 <div class="stat-card">
@@ -68,7 +68,7 @@
                 </div>
             </div>
             {% endblock %}
-
+            #}
             {# --- Botón de seguir --- #}
             {% block follow %}
             {% if current_user.is_authenticated %}
