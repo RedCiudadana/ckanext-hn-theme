@@ -12,6 +12,7 @@ Example:
 <section id="dataset-resources" class="resources">
     <!-- i was rl-->
   <h3>Descargas</h3>
+                <!-- nuevo li custom-->
   {% block resource_list %}
     {% if resources %}
       <ul class="{% block resource_list_class %}resource-list{% endblock %}">
@@ -29,7 +30,7 @@ Example:
                 </a>
                 <!-- li custom-->
             </li>
-            {#% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %#}
+  
 
           {% endfor %}
         {% endblock %}
