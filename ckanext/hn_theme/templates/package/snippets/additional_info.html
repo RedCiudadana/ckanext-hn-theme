@@ -74,15 +74,21 @@
         {% endif %}
 
 <!-- NUEVOS CAMPOS -->
-          <tr>
-            <th scope="row" class="dataset-label">{{ _("Periodicity") }}</th>
-            {% set periodicity = h.get_pkg_dict_value(pkg_dict, 'periodicidad') %}
-            {% if periodicity %}
-              <td class="dataset-details">{{ periodicity }}</td>
-            {% else %}
-              <td class="dataset-details"> No disponible</td>
-            {% endif %}
-          </tr>
+           {# --- Licencia (usa campos nativos si existen) --- #}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("License") }}</th>
+          {% if pkg_dict.license_title %}
+            <td class="dataset-details" property="dct:license">
+              {% if pkg_dict.license_url and h.is_url(pkg_dict.license_url) %}
+                <a href="{{ pkg_dict.license_url }}" target="_blank" rel="noopener">{{ pkg_dict.license_title }}</a>
+              {% else %}
+                {{ pkg_dict.license_title }}
+              {% endif %}
+            </td>
+          {% else %}
+            <td class="dataset-details"> No disponible</td>
+          {% endif %}
+        </tr>
           <!-- FIN NUEVOS CAMPOS -->
 
       {% block extras scoped %}
