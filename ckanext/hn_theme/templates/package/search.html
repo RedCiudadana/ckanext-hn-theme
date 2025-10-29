@@ -1,4 +1,4 @@
-{# 
+{#
   CKAN HN Theme - personalización segura del aside derecho en /dataset
   Este template solo añade contenido extra al aside, sin alterar la estructura base.
 #}
@@ -11,10 +11,10 @@
 ================================= #}
 
 {% block search_facets %}
-  {% snippet "snippets/facet_list.html",
-      facets=c.facets,
-      search_facets=c.search_facets,
-      facet_titles=c.facet_titles,
-      show_more_facets=c.show_more_facets
-  %}
+ {% snippet "snippets/facet_list.html",
+    facets=c.facets,
+    search_facets=c.search_facets,
+    facet_titles=c.facet_titles,
+    show_more_facets=c.show_more_facets
+%}
 {% endblock %}
