@@ -10,7 +10,8 @@
 </span>
     {% endif %}
 <!--prueba henry-->
-{#<h1>
+{#
+  <h1>
     {% block page_heading %}
     {{ h.dataset_display_name(pkg) }}
     {% if pkg.state.startswith('draft') %}
@@ -20,7 +21,7 @@
     <span class="badge bg-info">{{ _('Deleted') }}</span>
     {% endif %}
     {% endblock %}
-</h1>#}
+</h1>
     {% block package_notes %}
       {% if pkg.notes %}
 <div class="notes embedded-content">
@@ -29,7 +30,7 @@
       {% endif %}
     {% endblock %}
   {% endblock %}
-
+#}
   
   {% block package_additional_info %}
     {% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
