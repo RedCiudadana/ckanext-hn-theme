@@ -3,10 +3,10 @@
 {% set url_action = 'resource_edit' if url_is_edit and can_edit else 'resource_read' %}
 {% set url = h.url_for('resource.read', id=pkg.name, resource_id=res.id) %}
 
-<div class="col" data-id="{{ res.id }}">
-
-  <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">    
-    <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}"></span>  
-  </a>
-
+<div class="col">
+    <div class="resource-item" data-id="{{ res.id }}">
+    <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">        
+        <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>  
+    </a>
+    </div>
 </div>
