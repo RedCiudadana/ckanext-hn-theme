@@ -866,8 +866,7 @@ body {
 /* nuevo estilo */
 /* Estilo para el logo */
 .org-logo img.org-avatar {
-    width: 80px;
-    height: 80px;
+    width: 80%;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 12px;
