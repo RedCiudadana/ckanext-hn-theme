@@ -17,7 +17,7 @@ Example:
     {% if resources %}
       <ul class="{% block resource_list_class %}resource-list{% endblock %}">
         <!-- li custom before inner block-->
-        {% block resource_list_inner %}
+        {#{% block resource_list_inner %}#}
         <!-- li custom inner block-->
           {% for resource in resources %}
             {% set res=resource %}
@@ -32,10 +32,8 @@ Example:
                 </a>
                 <!-- li custom-->
             </li>
-  
-
           {% endfor %}
-        {% endblock %}
+        {#{% endblock %}#}
       </ul>
     {% else %}
       <!-- else block-->
