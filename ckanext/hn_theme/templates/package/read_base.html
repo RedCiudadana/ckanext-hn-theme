@@ -30,9 +30,16 @@
   {% set org = pkg.organization %}
 <section class="module module-narrow org-header mb-4">
     <div class="module-content text-center">
-        <pre>
-        pkg.organization: {{ pkg.organization }}
-        </pre>
+        {# Logo de la organización #}
+        <div class="mb-3">
+           {{ org.title or org.name }}
+        </div>
+        {# Nombre de la institución #}
+        <h2 class="h4 mb-0">
+            
+                {{ org.title or org.name }}
+           
+        </h2>
     </div>
 </section>
 {% endif %}
