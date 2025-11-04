@@ -17,27 +17,7 @@ Example:
             {% block package_info_inner %}
             {% set org = c.group_dict if c.group_dict else (pkg.organization if pkg.organization else none) %}
             <div class="col-12">
-
-                {% block image %}
-                <div class="image">
-                    <a href="{{ url }}">
-                        <img src="{{ org.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" style="width: 60%;" alt="{{ org.name }}" />
-                    </a>
-                </div>
-                {% endblock %}
-            </div>
-            <div class="col-12">
-                {% block heading %}
-                <h1 class="heading">{{ h.dataset_display_name(pkg) }}</h1>
-
-                <span style="font-size: 17px;">
-                    {{ org.title or org.name }}
-                    {% if org.state == 'deleted' %}
-                    [{{ _('Deleted') }}]
-                    {% endif %}
-                </span>
-
-                {% endblock %}
+               
 
             </div>
             <div class="col-12">
