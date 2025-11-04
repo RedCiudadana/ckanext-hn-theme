@@ -27,17 +27,9 @@
 
   {% block secondary_help_content %}{% endblock %}
 {% if pkg.organization %}   
-    <section class="module module-narrow org-header mb-4">
-      <div class="module-content text-center">
-
-        {# Nombre de la institución #}
-        <h2 class="h4 mb-0">
-           
-                {{ pkg.organization.title or pkg.organization.name }}
-           
-        </h2>
-      </div>
-    </section>
+<pre>
+pkg.organization: {{ pkg.organization.name }}
+</pre>
   {% endif %}
   {% block package_info %}
     {% set org = h.get_organization(pkg.organization.id) %}
