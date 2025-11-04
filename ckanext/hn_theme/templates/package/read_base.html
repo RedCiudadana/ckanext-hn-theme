@@ -26,30 +26,7 @@
 {% block secondary_content %}
 
   {% block secondary_help_content %}{% endblock %}
-{% if pkg.organization and pkg.organization.name %}
-  {% set org = pkg.organization %}
-  {% set image_url = org.image_display_url.strip() if org.image_display_url else '' %}
-  {% set safe_image_url = image_url if image_url and image_url.startswith(('http://', 'https://', '/')) else h.url_for_static('/base/images/placeholder-organization.png') %}
 
-<section class="module module-narrow org-header mb-4">
-    <div class="module-content text-center">
-        <div class="mb-3">
-            <a href="{{ h.url_for('organization.read', id=org.name) }}">
-                <img src="{{ safe_image_url }}"
-                     alt="{{ org.title or org.name }}"
-                     class="img-fluid"
-                     style="max-height: 80px; width: auto;" />
-            </a>
-        </div>
-        <h2 class="h4 mb-0">
-            <a href="{{ h.url_for('organization.read', id=org.name) }}"
-               class="text-decoration-none text-dark">
-                {{ org.title or org.name }}
-            </a>
-        </h2>
-    </div>
-</section>
-{% endif %}
   {% block package_info %}
     {% set org = h.get_organization(pkg.organization.id) %}
     {% snippet 'package/snippets/info.html', pkg=pkg, org=org, am_following=am_following %}
