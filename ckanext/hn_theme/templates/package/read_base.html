@@ -26,23 +26,20 @@
 {% block secondary_content %}
 
   {% block secondary_help_content %}{% endblock %}
-{% if pkg.organization and pkg.organization.name %}
-  {% set org = pkg.organization %}
-<section class="module module-narrow org-header mb-4">
-    <div class="module-content text-center">
-        {# Logo de la organización #}
-        <div class="mb-3">
-           {{ org.name }}
-        </div>
+{% if pkg.organization %}   
+    <section class="module module-narrow org-header mb-4">
+      <div class="module-content text-center">
+
         {# Nombre de la institución #}
         <h2 class="h4 mb-0">
-            
-                {{ org.name }}
-           
+            <a href="{{ h.url_for('organization.read', id=pkg.organization.name) }}"
+               class="text-decoration-none text-dark">
+                {{ pkg.organization.title or pkg.organization.name }}
+            </a>
         </h2>
-    </div>
-</section>
-{% endif %}
+      </div>
+    </section>
+  {% endif %}
   {% block package_info %}
     {% set org = h.get_organization(pkg.organization.id) %}
     {% snippet 'package/snippets/info.html', pkg=pkg, org=org, am_following=am_following %}
@@ -56,7 +53,7 @@
     {% endif %}
   {% endblock %}
 #}
-
+  
 {#
   {% block package_social %}
     {% snippet "snippets/social.html" %}
