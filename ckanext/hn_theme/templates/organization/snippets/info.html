@@ -49,33 +49,6 @@
             </p>
             {% endif %}
             {% endblock %}
-
-            {# --- Métricas: Seguidores, Datasets, Miembros --- #}
-            <!--{% if show_nums %}
-            {% block nums %}
-            <div class="org-stats">
-                <div class="stat-card">
-                    <div class="stat-value">{{ h.SI_number_span(num_followers) }}</div>
-                    <div class="stat-label">{{ _('Followers') }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">{{ h.SI_number_span(organization.package_count) }}</div>
-                    <div class="stat-label">{{ h.humanize_entity_type('package', dataset_type, 'facet label') or _('Datasets') }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">{{ h.SI_number_span(num_members) }}</div>
-                    <div class="stat-label">{{ _('Members') }}</div>
-                </div>
-            </div>
-            {% endblock %}
-
-            {# --- Botón de seguir --- #}
-            {% block follow %}
-            {% if current_user.is_authenticated %}
-            <div class="follow-button-container text-center">
-                {% snippet 'snippets/follow_button.html', am_following=am_following, obj_type='organization', obj_id=organization.id %}
-            </div>
-            {% endif %}-->
             {% endblock %}
             {% endif %}
 
