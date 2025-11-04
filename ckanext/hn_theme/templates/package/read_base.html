@@ -42,29 +42,7 @@
   {# ================================
       NUEVO: Información de la organización en la parte superior
      ================================ #}
-  {% if pkg.organization %}
-    {% set org = pkg.organization %}
-<section class="module module-narrow org-header mb-4">
-    <div class="module-content text-center">
-        {# Logo de la organización #}
-        <div class="mb-3">
-            <a href="{{ h.url_for('organization.read', id=org.name) }}">
-                <img src="{{ org.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}"
-                     alt="{{ org.title or org.name }}"
-                     class="img-fluid"
-                     style="max-height: 80px; width: auto;" />
-            </a>
-        </div>
-        {# Nombre de la institución #}
-        <h2 class="h4 mb-0">
-            <a href="{{ h.url_for('organization.read', id=org.name) }}"
-               class="text-decoration-none text-dark">
-                {{ org.title or org.name }}
-            </a>
-        </h2>
-    </div>
-</section>
-  {% endif %}
+  
   {% block package_info %}
     {% set org = h.get_organization(pkg.organization.id) %}
     {% snippet 'package/snippets/info.html', pkg=pkg, org=org, am_following=am_following %}
