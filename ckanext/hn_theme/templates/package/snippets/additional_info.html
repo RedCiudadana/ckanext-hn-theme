@@ -24,7 +24,7 @@
           </tr>
 
           <tr>
-              <th scope="row" class="dataset-label">{{ _("Author") }}</th>
+              <th scope="row" class="dataset-label">Responsable</th>
               {% if pkg_dict.author %}
               <td class="dataset-details" property="dc:creator">{{ pkg_dict.author  }}</td>
               {% else %}
@@ -33,7 +33,7 @@
           </tr>
 
           <tr>
-              <th scope="row" class="dataset-label">{{ _('Maintainer') }}</th>
+              <th scope="row" class="dataset-label">Mantenedor</th>
               {% if pkg_dict.maintainer %}
               <td class="dataset-details" property="dc:contributor">{{ pkg_dict.maintainer }}</td>
               {% else %}
@@ -43,7 +43,7 @@
 
           {% if pkg_dict.metadata_created %}
           <tr>
-              <th scope="row" class="dataset-label">{{ _("Created") }}</th>
+              <th scope="row" class="dataset-label">Creado</th>
 
               <td class="dataset-details">
                   {% snippet 'snippets/local_friendly_datetime.html', datetime_obj=pkg_dict.metadata_created %}
@@ -53,7 +53,7 @@
 
           {% if pkg_dict.metadata_modified %}
           <tr>
-              <th scope="row" class="dataset-label">{{ _("Last Updated") }}</th>
+              <th scope="row" class="dataset-label">Fecha de actualizaci&oacute;n</th>
               <td class="dataset-details">
                   {% snippet 'snippets/local_friendly_datetime.html', datetime_obj=pkg_dict.metadata_modified %}
               </td>
@@ -63,7 +63,7 @@
           <!-- NUEVOS CAMPOS -->
           {# --- Licencia (usa campos nativos si existen) --- #}
           <tr>
-              <th scope="row" class="dataset-label">{{ _("License") }}</th>
+              <th scope="row" class="dataset-label">Licencia</th>
               {% if pkg_dict.license_title %}
               <td class="dataset-details" property="dct:license">
                   {% if pkg_dict.license_url and h.is_url(pkg_dict.license_url) %}
@@ -78,28 +78,41 @@
           </tr>
 
           <tr>
-              <th scope="row" class="dataset-label">{{ _('Source') }}</th>
-              {% if h.is_url(pkg_dict.url) %}
-              <td class="dataset-details" property="foaf:homepage">{{ h.link_to(pkg_dict.url, pkg_dict.url, rel='foaf:homepage', target='_blank') }}</td>
-              {% elif pkg_dict.url %}
-              <td class="dataset-details" property="foaf:homepage">{{ pkg_dict.url }}</td>
+              <th scope="row" class="dataset-label">Etiquetas/Tags</th>
+
+              {%  if pkg.tags %}
+              <td class="dataset-details" property="dc:tags">
+                  {% for tag in pkg.tags %}
+                  <span class="tag badge bg-light text-dark me-1 mb-1">
+                      {{ tag.display_name or tag.name }}
+                  </span>
+                  {% endfor %}
+              </td>
               {% else %}
-              <td class="dataset-details" property="foaf:homepage"> No disponible</td>
+              <td class="dataset-details" property="dc:tags"> No disponible</td>
               {% endif %}
+             
           </tr>
 
-          <tr>
-              <th scope="row" class="dataset-label">{{ _("Version") }}</th>
-              {% if pkg_dict.version %}
-              <td class="dataset-details">{{ pkg_dict.version }}</td>
-              {% else %}
-              <td class="dataset-details"> No disponible</td>
-              {% endif %}
-          </tr>
+          <!--<tr>
+        <th scope="row" class="dataset-label">{{ _('Source') }}</th>
+        {% if h.is_url(pkg_dict.url) %}
+        <td class="dataset-details" property="foaf:homepage">{{ h.link_to(pkg_dict.url, pkg_dict.url, rel='foaf:homepage', target='_blank') }}</td>
+        {% elif pkg_dict.url %}
+        <td class="dataset-details" property="foaf:homepage">{{ pkg_dict.url }}</td>
+        {% else %}
+        <td class="dataset-details" property="foaf:homepage"> No disponible</td>
+        {% endif %}
+    </tr>
 
-
-
-
+    <tr>
+        <th scope="row" class="dataset-label">{{ _("Version") }}</th>
+        {% if pkg_dict.version %}
+        <td class="dataset-details">{{ pkg_dict.version }}</td>
+        {% else %}
+        <td class="dataset-details"> No disponible</td>
+        {% endif %}
+    </tr>-->
           {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
           {% set periodicidad_val = None %}
           {% set diccionario_val = None %}
