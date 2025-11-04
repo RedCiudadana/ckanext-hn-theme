@@ -77,7 +77,7 @@
               {% endif %}
           </tr>
 
-          <!--<tr>
+          <tr>
               <th scope="row" class="dataset-label">Etiquetas/Tags</th>
 
               {%  if pkg_dict.tags %}
@@ -92,27 +92,9 @@
               <td class="dataset-details" property="dc:tags"> No disponible</td>
               {% endif %}
              
-          </tr>-->
+          </tr>
 
-          <!--<tr>
-        <th scope="row" class="dataset-label">{{ _('Source') }}</th>
-        {% if h.is_url(pkg_dict.url) %}
-        <td class="dataset-details" property="foaf:homepage">{{ h.link_to(pkg_dict.url, pkg_dict.url, rel='foaf:homepage', target='_blank') }}</td>
-        {% elif pkg_dict.url %}
-        <td class="dataset-details" property="foaf:homepage">{{ pkg_dict.url }}</td>
-        {% else %}
-        <td class="dataset-details" property="foaf:homepage"> No disponible</td>
-        {% endif %}
-    </tr>
-
-    <tr>
-        <th scope="row" class="dataset-label">{{ _("Version") }}</th>
-        {% if pkg_dict.version %}
-        <td class="dataset-details">{{ pkg_dict.version }}</td>
-        {% else %}
-        <td class="dataset-details"> No disponible</td>
-        {% endif %}
-    </tr>-->
+         
           {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
           {% set periodicidad_val = None %}
           {% set diccionario_val = None %}
