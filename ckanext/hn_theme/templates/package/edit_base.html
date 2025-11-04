@@ -8,3 +8,6 @@
 	<li class="active">{% link_for _('Edit'), named_route=pkg.type ~ '.edit', id=pkg.name %}</li>
     {% endif %}
 {% endblock %}
+{% block content_action %}
+    {% link_for h.humanize_entity_type('package', pkg.type, 'view label') or _('View dataset'), named_route=pkg.type ~ '.read', id=pkg.name, class_='btn btn-secondary', icon='eye' %}
+{% endblock %}
