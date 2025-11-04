@@ -77,22 +77,7 @@
               {% endif %}
           </tr>
 
-          <tr>
-              <th scope="row" class="dataset-label">Etiquetas/Tags</th>
-
-              {%  if pkg_dict.tags %}
-              <td class="dataset-details" property="dc:tags">
-                  {% for tag in pkg.tags %}
-                  <span class="tag badge bg-light text-dark me-1 mb-1">
-                      {{ tag.display_name or tag.name }}
-                  </span>
-                  {% endfor %}
-              </td>
-              {% else %}
-              <td class="dataset-details" property="dc:tags"> No disponible</td>
-              {% endif %}
-             
-          </tr>
+         
 
          
           {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
