@@ -80,7 +80,7 @@
           <tr>
               <th scope="row" class="dataset-label">Etiquetas/Tags</th>
 
-              {%  if pkg.tags %}
+              {%  if pkg_dict.tags %}
               <td class="dataset-details" property="dc:tags">
                   {% for tag in pkg.tags %}
                   <span class="tag badge bg-light text-dark me-1 mb-1">
