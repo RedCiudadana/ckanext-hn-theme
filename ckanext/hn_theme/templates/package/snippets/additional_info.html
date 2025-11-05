@@ -94,26 +94,35 @@
 
 
             {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
+            {# Extraer valores de interés desde pkg_dict.extras #}
             {% set periodicidad_val = None %}
             {% set diccionario_val = None %}
+            {% set other_extras = [] %}
+
             {% if pkg_dict.extras %}
             {% for extra in pkg_dict.extras %}
-            {# en CKAN extras suelen ser dicts con 'key' y 'value' #}
             {% if extra.key == 'frequency' %}
             {% set periodicidad_val = extra.value %}
-            <tr>
-                <th scope="row" class="dataset-label">Periodicidad</th>
-                {% if periodicidad_val %}
-                <td class="dataset-details">{{ periodicidad_val }}</td>
-                {% else %}
-                <td class="dataset-details"> No disponible</td>
-                {% endif %}
-            </tr>
             {% elif extra.key == 'data_dictionary' %}
             {% set diccionario_val = extra.value %}
+            {% else %}
+            {% do other_extras.append(extra) %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            {# Mostrar Periodicidad si existe #}
+            {% if periodicidad_val is not none %}
+            <tr>
+                <th scope="row" class="dataset-label">Periodicidad</th>
+                <td class="dataset-details">{{ periodicidad_val }}</td>
+            </tr>
+            {% endif %}
+
+            {# Mostrar Diccionario de datos si existe #}
+            {% if diccionario_val is not none %}
             <tr>
                 <th scope="row" class="dataset-label">Diccionario de datos</th>
-                {% if diccionario_val %}
                 <td class="dataset-details">
                     {% if h.is_url(diccionario_val) %}
                     <a href="{{ diccionario_val }}" target="_blank" rel="noopener">Ver diccionario</a>
@@ -121,24 +130,19 @@
                     {{ diccionario_val }}
                     {% endif %}
                 </td>
-                {% else %}
-                <td class="dataset-details"> No disponible</td>
-                {% endif %}
             </tr>
-            {% else %}
-            <!-- FIN NUEVOS CAMPOS -->
+            {% endif %}
+
+            {# Mostrar los demás extras (sin frequency ni data_dictionary) #}
             {% block extras scoped %}
-            {% for extra in h.sorted_extras(pkg_dict.extras) %}
+            {% for extra in h.sorted_extras(other_extras) %}
             {% set key, value = extra %}
-            <tr rel="dc:relation" resource="_:extra{{ i }}">
+            <tr rel="dc:relation" resource="_:extra{{ loop.index }}">
                 <th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
                 <td class="dataset-details" property="rdf:value">{{ value }}</td>
             </tr>
             {% endfor %}
             {% endblock %}
-            {% endif %}
-            {% endfor %}
-            {% endif %}
 
 
 
