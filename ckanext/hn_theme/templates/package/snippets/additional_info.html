@@ -4,7 +4,7 @@
   <table class="table table-condensed custom-additional-info">    
       <tbody>
           {% block package_additional_info %}
-
+          
           <tr>
               <th scope="row" class="dataset-label">{{ _("Title") }}</th>
               {% if pkg_dict.title %}
@@ -77,7 +77,20 @@
               {% endif %}
           </tr>
 
-         
+          <tr>
+              <th scope="row" class="dataset-label">Etiquetas</th>
+              <td class="dataset-details">
+                  {% if pkg_dict and pkg_dict.tags %}
+                  {% for tag in pkg_dict.tags %}
+                  <span class="tag badge bg-light text-dark me-1">
+                      {{ tag.display_name or tag.name or 'Sin nombre' }}
+                  </span>
+                  {% endfor %}
+                  {% else %}
+                  No disponible
+                  {% endif %}
+              </td>
+          </tr>
 
          
           {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
