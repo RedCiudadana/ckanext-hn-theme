@@ -101,12 +101,6 @@
             {# en CKAN extras suelen ser dicts con 'key' y 'value' #}
             {% if extra.key == 'frequency' %}
             {% set periodicidad_val = extra.value %}
-            {% elif extra.key == 'data_dictionary' %}
-            {% set diccionario_val = extra.value %}
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-
             <tr>
                 <th scope="row" class="dataset-label">Periodicidad</th>
                 {% if periodicidad_val %}
@@ -115,7 +109,8 @@
                 <td class="dataset-details"> No disponible</td>
                 {% endif %}
             </tr>
-
+            {% elif extra.key == 'data_dictionary' %}
+            {% set diccionario_val = extra.value %}
             <tr>
                 <th scope="row" class="dataset-label">Diccionario de datos</th>
                 {% if diccionario_val %}
@@ -130,7 +125,7 @@
                 <td class="dataset-details"> No disponible</td>
                 {% endif %}
             </tr>
-
+            {% else %}
             <!-- FIN NUEVOS CAMPOS -->
             {% block extras scoped %}
             {% for extra in h.sorted_extras(pkg_dict.extras) %}
@@ -141,6 +136,15 @@
             </tr>
             {% endfor %}
             {% endblock %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+
+
+
+
+
 
             {% endblock %}
         </tbody>
