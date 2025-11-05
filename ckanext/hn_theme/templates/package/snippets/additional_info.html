@@ -1,148 +1,151 @@
 <section class="additional-info">
-  <!-- I was  ai-->
-  <h3>{{ _('Additional Info') }} (metadata)</h3>
-  <table class="table table-condensed custom-additional-info">    
-      <tbody>
-          {% block package_additional_info %}
-          
-          <tr>
-              <th scope="row" class="dataset-label">{{ _("Title") }}</th>
-              {% if pkg_dict.title %}
-              <td class="dataset-details" property="dc:title">{{ pkg_dict.title  }}</td>
-              {% else %}
-              <td class="dataset-details" property="dc:title"> No disponible</td>
-              {% endif %}
-          </tr>
+    <!-- I was  ai-->
+    <h3>{{ _('Additional Info') }} (metadata)</h3>
+    <pre>
+        {{ pkg_dict | pprint }}
+    </pre>
+    <table class="table table-condensed custom-additional-info">
+        <tbody>
+            {% block package_additional_info %}
 
-          <tr>
-              <th scope="row" class="dataset-label">{{ _("Description") }}</th>
-              {% if pkg_dict.description %}
-              <td class="dataset-details" property="dc:description">{{ pkg_dict.description  }}</td>
-              {% else %}
-              <td class="dataset-details" property="dc:description"> No disponible</td>
-              {% endif %}
-          </tr>
+            <tr>
+                <th scope="row" class="dataset-label">{{ _("Title") }}</th>
+                {% if pkg_dict.title %}
+                <td class="dataset-details" property="dc:title">{{ pkg_dict.title  }}</td>
+                {% else %}
+                <td class="dataset-details" property="dc:title"> No disponible</td>
+                {% endif %}
+            </tr>
 
-          <tr>
-              <th scope="row" class="dataset-label">Responsable</th>
-              {% if pkg_dict.author %}
-              <td class="dataset-details" property="dc:creator">{{ pkg_dict.author  }}</td>
-              {% else %}
-              <td class="dataset-details" property="dc:creator"> No disponible</td>
-              {% endif %}
-          </tr>
+            <tr>
+                <th scope="row" class="dataset-label">{{ _("Description") }}</th>
+                {% if pkg_dict.description %}
+                <td class="dataset-details" property="dc:description">{{ pkg_dict.description  }}</td>
+                {% else %}
+                <td class="dataset-details" property="dc:description"> No disponible</td>
+                {% endif %}
+            </tr>
 
-          <tr>
-              <th scope="row" class="dataset-label">Mantenedor</th>
-              {% if pkg_dict.maintainer %}
-              <td class="dataset-details" property="dc:contributor">{{ pkg_dict.maintainer }}</td>
-              {% else %}
-              <td class="dataset-details" property="dc:contributor"> No disponible</td>
-              {% endif %}
-          </tr>
+            <tr>
+                <th scope="row" class="dataset-label">Responsable</th>
+                {% if pkg_dict.author %}
+                <td class="dataset-details" property="dc:creator">{{ pkg_dict.author  }}</td>
+                {% else %}
+                <td class="dataset-details" property="dc:creator"> No disponible</td>
+                {% endif %}
+            </tr>
 
-          {% if pkg_dict.metadata_created %}
-          <tr>
-              <th scope="row" class="dataset-label">Creado</th>
+            <tr>
+                <th scope="row" class="dataset-label">Mantenedor</th>
+                {% if pkg_dict.maintainer %}
+                <td class="dataset-details" property="dc:contributor">{{ pkg_dict.maintainer }}</td>
+                {% else %}
+                <td class="dataset-details" property="dc:contributor"> No disponible</td>
+                {% endif %}
+            </tr>
 
-              <td class="dataset-details">
-                  {% snippet 'snippets/local_friendly_datetime.html', datetime_obj=pkg_dict.metadata_created %}
-              </td>
-          </tr>
-          {% endif %}
+            {% if pkg_dict.metadata_created %}
+            <tr>
+                <th scope="row" class="dataset-label">Creado</th>
 
-          {% if pkg_dict.metadata_modified %}
-          <tr>
-              <th scope="row" class="dataset-label">Fecha de actualizaci&oacute;n</th>
-              <td class="dataset-details">
-                  {% snippet 'snippets/local_friendly_datetime.html', datetime_obj=pkg_dict.metadata_modified %}
-              </td>
-          </tr>
-          {% endif %}
+                <td class="dataset-details">
+                    {% snippet 'snippets/local_friendly_datetime.html', datetime_obj=pkg_dict.metadata_created %}
+                </td>
+            </tr>
+            {% endif %}
 
-          <!-- NUEVOS CAMPOS -->
-          {# --- Licencia (usa campos nativos si existen) --- #}
-          <tr>
-              <th scope="row" class="dataset-label">Licencia</th>
-              {% if pkg_dict.license_title %}
-              <td class="dataset-details" property="dct:license">
-                  {% if pkg_dict.license_url and h.is_url(pkg_dict.license_url) %}
-                  <a href="{{ pkg_dict.license_url }}" target="_blank" rel="noopener">{{ pkg_dict.license_title }}</a>
-                  {% else %}
-                  {{ pkg_dict.license_title }}
-                  {% endif %}
-              </td>
-              {% else %}
-              <td class="dataset-details"> No disponible</td>
-              {% endif %}
-          </tr>
+            {% if pkg_dict.metadata_modified %}
+            <tr>
+                <th scope="row" class="dataset-label">Fecha de actualizaci&oacute;n</th>
+                <td class="dataset-details">
+                    {% snippet 'snippets/local_friendly_datetime.html', datetime_obj=pkg_dict.metadata_modified %}
+                </td>
+            </tr>
+            {% endif %}
 
-          <tr>
-              <th scope="row" class="dataset-label">Etiquetas</th>
-              <td class="dataset-details">
-                  {% if pkg_dict and pkg_dict.tags %}
-                  {% for tag in pkg_dict.tags %}
-                  <span class="tag badge bg-light text-dark me-1">
-                      {{ tag.display_name or tag.name or 'Sin nombre' }}
-                  </span>
-                  {% endfor %}
-                  {% else %}
-                  No disponible
-                  {% endif %}
-              </td>
-          </tr>
+            <!-- NUEVOS CAMPOS -->
+            {# --- Licencia (usa campos nativos si existen) --- #}
+            <tr>
+                <th scope="row" class="dataset-label">Licencia</th>
+                {% if pkg_dict.license_title %}
+                <td class="dataset-details" property="dct:license">
+                    {% if pkg_dict.license_url and h.is_url(pkg_dict.license_url) %}
+                    <a href="{{ pkg_dict.license_url }}" target="_blank" rel="noopener">{{ pkg_dict.license_title }}</a>
+                    {% else %}
+                    {{ pkg_dict.license_title }}
+                    {% endif %}
+                </td>
+                {% else %}
+                <td class="dataset-details"> No disponible</td>
+                {% endif %}
+            </tr>
 
-         
-          {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
-          {% set periodicidad_val = None %}
-          {% set diccionario_val = None %}
-          {% if pkg_dict.extras %}
-          {% for extra in pkg_dict.extras %}
-          {# en CKAN extras suelen ser dicts con 'key' y 'value' #}
-          {% if extra.key == 'frequency' %}
-          {% set periodicidad_val = extra.value %}
-          {% elif extra.key == 'data_dictionary' %}
-          {% set diccionario_val = extra.value %}
-          {% endif %}
-          {% endfor %}
-          {% endif %}
+            <tr>
+                <th scope="row" class="dataset-label">Etiquetas</th>
+                <td class="dataset-details">
+                    {% if pkg_dict and pkg_dict.tags %}
+                    {% for tag in pkg_dict.tags %}
+                    <span class="tag badge bg-light text-dark me-1">
+                        {{ tag.display_name or tag.name or 'Sin nombre' }}
+                    </span>
+                    {% endfor %}
+                    {% else %}
+                    No disponible
+                    {% endif %}
+                </td>
+            </tr>
 
-          <tr>
-              <th scope="row" class="dataset-label">Periodicidad</th>
-              {% if periodicidad_val %}
-              <td class="dataset-details">{{ periodicidad_val }}</td>
-              {% else %}
-              <td class="dataset-details"> No disponible</td>
-              {% endif %}
-          </tr>
 
-          <tr>
-              <th scope="row" class="dataset-label">{{ _("Data Dictionary") }}</th>
-              {% if diccionario_val %}
-              <td class="dataset-details">
-                  {% if h.is_url(diccionario_val) %}
-                  <a href="{{ diccionario_val }}" target="_blank" rel="noopener">{{ _('View dictionary') }}</a>
-                  {% else %}
-                  {{ diccionario_val }}
-                  {% endif %}
-              </td>
-              {% else %}
-              <td class="dataset-details"> No disponible</td>
-              {% endif %}
-          </tr>
+            {# --- Buscamos 'periodicidad' y 'diccionario_datos' en extras de forma segura --- #}
+            {% set periodicidad_val = None %}
+            {% set diccionario_val = None %}
+            {% if pkg_dict.extras %}
+            {% for extra in pkg_dict.extras %}
+            {# en CKAN extras suelen ser dicts con 'key' y 'value' #}
+            {% if extra.key == 'frequency' %}
+            {% set periodicidad_val = extra.value %}
+            {% elif extra.key == 'data_dictionary' %}
+            {% set diccionario_val = extra.value %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
 
-          <!-- FIN NUEVOS CAMPOS -->
-          {% block extras scoped %}
-          {% for extra in h.sorted_extras(pkg_dict.extras) %}
-          {% set key, value = extra %}
-          <tr rel="dc:relation" resource="_:extra{{ i }}">
-              <th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
-              <td class="dataset-details" property="rdf:value">{{ value }}</td>
-          </tr>
-          {% endfor %}
-          {% endblock %}
+            <tr>
+                <th scope="row" class="dataset-label">Periodicidad</th>
+                {% if periodicidad_val %}
+                <td class="dataset-details">{{ periodicidad_val }}</td>
+                {% else %}
+                <td class="dataset-details"> No disponible</td>
+                {% endif %}
+            </tr>
 
-          {% endblock %}
-      </tbody>
-  </table>
+            <tr>
+                <th scope="row" class="dataset-label">{{ _("Data Dictionary") }}</th>
+                {% if diccionario_val %}
+                <td class="dataset-details">
+                    {% if h.is_url(diccionario_val) %}
+                    <a href="{{ diccionario_val }}" target="_blank" rel="noopener">{{ _('View dictionary') }}</a>
+                    {% else %}
+                    {{ diccionario_val }}
+                    {% endif %}
+                </td>
+                {% else %}
+                <td class="dataset-details"> No disponible</td>
+                {% endif %}
+            </tr>
+
+            <!-- FIN NUEVOS CAMPOS -->
+            {% block extras scoped %}
+            {% for extra in h.sorted_extras(pkg_dict.extras) %}
+            {% set key, value = extra %}
+            <tr rel="dc:relation" resource="_:extra{{ i }}">
+                <th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
+                <td class="dataset-details" property="rdf:value">{{ value }}</td>
+            </tr>
+            {% endfor %}
+            {% endblock %}
+
+            {% endblock %}
+        </tbody>
+    </table>
 </section>
