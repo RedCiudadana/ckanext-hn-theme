@@ -546,6 +546,30 @@ body {
   gap: 16px;
 }
 
+.featured_groups-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Usa el gap que ya definiste */
+    margin-top: 1.5rem;
+}
+
+    .featured_groups-grid > a {
+        flex: 1 1 calc(20% - 13px); /* 5 columnas: 100%/5 = 20%, menos gap */
+        min-width: 180px; /* Evita que se encojan demasiado en pantallas grandes */
+    }
+
+@media (max-width: 768px) {
+    .featured_groups-grid > a {
+        flex: 1 1 calc(50% - 8px); /* 2 por fila en tablet */
+    }
+}
+
+@media (max-width: 576px) {
+    .featured_groups-grid > a {
+        flex: 1 1 100%; /* 1 por fila en móvil */
+    }
+}
+
 .home-group-item {
     background-color: #4994cd;
     border-radius: 6px;
