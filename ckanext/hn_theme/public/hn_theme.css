@@ -551,7 +551,7 @@ body {
     background-color: #4994cd;
     border-radius: 6px;
     display: flex;
-    align-items: flex-start; /* ← Alinea el contenido ARRIBA (no al centro) */
+    align-items: center;
     gap: 16px;
     padding: 16px;
     color: #fff;
@@ -560,7 +560,7 @@ body {
 }
 
     .home-group-item .img {
-        flex-shrink: 0; /* Evita que la imagen se achate */
+        flex-shrink: 0; 
     }
 
     .home-group-item img {
@@ -571,7 +571,7 @@ body {
 
     .home-group-item .text {
         flex: 1;
-        min-width: 0; /* Permite truncado si es necesario */
+        min-width: 0; 
     }
 
     .home-group-item h3 {
@@ -589,7 +589,7 @@ body {
         color: rgba(255, 255, 255, 0.9);
     }
 
-    /* ===== HOVER (invertido) ===== */
+    
     .home-group-item:hover {
         background-color: #fff;
         color: #000;
