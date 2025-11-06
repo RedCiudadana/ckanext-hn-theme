@@ -6,21 +6,22 @@
 <tr data-id="{{ res.id }}">
     {# 1. Ícono con enlace a metadatos #}
     <td class="text-center align-middle">
-        <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=res.id) }}"
-           title="Ver metadatos del recurso: {{ res.name or res.description }}">
-            {{ h.format_icon(res.get('format', ''), alt=res.get('format', '').upper()) | safe }}
-        </a>
+        
     </td>
 
     {# 2. Descripción (nombre + descripción) #}
     <td class="align-middle">
-    
+        <strong>{{ res.get('name') or _('Sin título') }}</strong>
+        {% if res.get('description') %}
+        <br><small class="text-muted">{{ res.description | truncate(120) }}</small>
+        {% endif %}
     </td>
 
     {# 3. Acciones: Descargar + Metadatos #}
     <td class="align-middle">
         <div class="btn-group btn-group-sm" role="group">
-            
+            {# Botón: Descargar #}
+           
         </div>
     </td>
 </tr>
