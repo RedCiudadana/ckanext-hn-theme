@@ -1,31 +1,4 @@
-{% if c.user %}
-  {# Usuario autenticado #}
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-user"></i> usuario
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-        <li>
-            <a class="dropdown-item" href="">
-                <i class="fas fa-user-circle"></i> Mi cuenta
-            </a>
-        </li>
-        {% if h.check_access('sysadmin') %}
-        <li>
-            <a class="dropdown-item" href="">
-                <i class="fas fa-cog"></i> Administración
-            </a>
-        </li>
-        {% endif %}
-        <li><hr class="dropdown-divider"></li>
-        <li>
-            <a class="dropdown-item" href="">
-                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-            </a>
-        </li>
-    </ul>
-</li>
-{% else %}
+
   {# Usuario anónimo #}
 <li class="nav-item">
     <a class="nav-link" href="">
@@ -37,4 +10,3 @@
         <i class="fas fa-user-plus"></i> Registrarse
     </a>
 </li>
-{% endif %}
