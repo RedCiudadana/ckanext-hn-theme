@@ -134,19 +134,23 @@
 {% endblock %}
 
 {% block primary_content %}
-<section id="auto-preview">
-    <h3>Vista previa (automática)</h3>
-    <div class="data-viewer" data-module="data-viewer"
-         data-module-resource-url="{{ h.url_for('resource.download', id=pkg.name, resource_id=resource.id, qualified=True) }}"
-         data-module-format="{{ resource.format.lower() }}">
-        <p>Cargando vista previa…</p>
-    </div>
+{% if resource.views %}
+<section id="resource-views">
+    <h3>{{ _('Vista previa') }}</h3>
+    {% snippet 'package/snippets/resource_views_list.html',
+    views=resource.views,
+    pkg=pkg,
+    resource=resource %}
 </section>
-
-<script>// Inicializa el data-viewer si está disponible
-  if (typeof ckan !== 'undefined' && ckan.moduleRegistry && ckan.moduleRegistry['data-viewer']) {
-    ckan.moduleRegistry['data-viewer'].initialize();
-  }</script>
+{% elif h.resource_preview(resource) %}
+  {# Vista por defecto (Data Explorer, etc.) #}
+<section id="data-preview">
+    <h3>{{ _('Vista previa') }}</h3>
+    {% snippet 'dataviewer/snippets/data_preview.html',
+    resource=resource,
+    embed=False %}
+</section>
+{% endif %}
 
   {% block resource_additional_information %}
     {% if res %}
