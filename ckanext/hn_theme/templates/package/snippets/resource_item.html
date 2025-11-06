@@ -6,12 +6,15 @@
 <tr data-id="{{ res.id }}">
     {# 1. Ícono con enlace a metadatos #}
     <td class="text-center align-middle">
-        
+        <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=res.id) }}"
+           title="Ver metadatos del recurso: {{ res.name or res.description }}">
+            {{ h.format_icon(res.get('format', ''), alt=res.get('format', '').upper()) | safe }}
+        </a>
     </td>
 
     {# 2. Descripción (nombre + descripción) #}
     <td class="align-middle">
-        
+    
     </td>
 
     {# 3. Acciones: Descargar + Metadatos #}
