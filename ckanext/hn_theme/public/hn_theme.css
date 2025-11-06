@@ -639,7 +639,7 @@ body {
 .custom-dataset-card .dataset-header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
   margin-bottom: 12px;
   flex-wrap: wrap;
   gap: 8px;
@@ -887,7 +887,7 @@ body {
 /* Contenedor de estadísticas */
 .org-stats {
     display: flex;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
     margin: 16px 0;
     gap: 8px;
 }
