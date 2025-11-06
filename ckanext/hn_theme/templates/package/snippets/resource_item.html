@@ -6,43 +6,18 @@
 <tr data-id="{{ res.id }}">
     {# 1. Ícono con enlace a metadatos #}
     <td class="text-center align-middle">
-        <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=res.id) }}"
-           title="Ver metadatos del recurso: {{ res.name or res.description }}">
-            {{ h.format_icon(res.get('format', ''), alt=res.get('format', '').upper()) | safe }}
-        </a>
+        
     </td>
 
     {# 2. Descripción (nombre + descripción) #}
     <td class="align-middle">
-        <strong>{{ res.get('name') or _('Sin título') }}</strong>
-        {% if res.get('description') %}
-        <br><small class="text-muted">{{ res.description | truncate(120) }}</small>
-        {% endif %}
+        
     </td>
 
     {# 3. Acciones: Descargar + Metadatos #}
     <td class="align-middle">
         <div class="btn-group btn-group-sm" role="group">
-            {# Botón: Descargar #}
-            {% if res.get('url') and h.is_url(res.url) %}
-            <a href="{{ res.url }}"
-               class="btn btn-success"
-               title="Descargar {{ res.name or res.format }}"
-               target="_blank" rel="noopener">
-                <i class="fas fa-download"></i> Descargar
-            </a>
-            {% else %}
-            <button class="btn btn-secondary" disabled title="URL no disponible">
-                <i class="fas fa-download"></i> Descargar
-            </button>
-            {% endif %}
-
-            {# Botón: Ver metadatos #}
-            <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=res.id) }}"
-               class="btn btn-outline-primary"
-               title="Ver metadatos del recurso">
-                <i class="fas fa-info-circle"></i> Metadatos
-            </a>
+            
         </div>
     </td>
 </tr>
