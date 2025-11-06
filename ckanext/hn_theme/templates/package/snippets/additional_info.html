@@ -16,10 +16,10 @@
 
             <tr>
                 <th scope="row" class="dataset-label">{{ _("Description") }}</th>
-                {% if pkg_dict.description %}
-                <td class="dataset-details" property="dc:description">{{ pkg_dict.description  }}</td>
+                {% if pkg_dict.notes %}
+                <td class="dataset-details" property="dc:notes">{{ pkg_dict.notes  }}</td>
                 {% else %}
-                <td class="dataset-details" property="dc:description"> No disponible</td>
+                <td class="dataset-details" property="dc:notes"> No disponible</td>
                 {% endif %}
             </tr>
 
