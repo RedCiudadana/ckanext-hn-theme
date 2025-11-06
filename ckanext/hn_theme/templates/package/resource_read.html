@@ -134,23 +134,6 @@
 {% endblock %}
 
 {% block primary_content %}
-{% if resource.views %}
-<section id="resource-views">
-    <h3>{{ _('Vista previa') }}</h3>
-    {% snippet 'package/snippets/resource_views_list.html',
-    views=resource.views,
-    pkg=pkg,
-    resource=resource %}
-</section>
-{% elif h.resource_preview(resource) %}
-  {# Vista por defecto (Data Explorer, etc.) #}
-<section id="data-preview">
-    <h3>{{ _('Vista previa') }}</h3>
-    {% snippet 'dataviewer/snippets/data_preview.html',
-    resource=resource,
-    embed=False %}
-</section>
-{% endif %}
 
   {% block resource_additional_information %}
     {% if res %}
