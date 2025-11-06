@@ -6,8 +6,16 @@
 <tr data-id="{{ res.id }}">
     {# 1. Ícono con enlace a metadatos #}
     <td class="text-center align-middle">
-        <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
-            <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
+        <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=res.id) }}"
+           class="heading d-inline-block"
+           title="Ver metadatos: {{ res.name or res.description }}"
+           style="text-decoration: none;">
+            <span class="format-label"
+                  property="dc:format"
+                  data-format="{{ res.format.lower() or 'data' }}"
+                  style="display: inline-block; min-width: 50px;">
+                {{ h.get_translated(res, 'format') or _('data') }}
+            </span>
         </a>
     </td>
 
