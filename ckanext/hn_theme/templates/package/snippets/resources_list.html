@@ -10,29 +10,77 @@ Example:
 
 #}
 <section id="dataset-resources" class="resources">
-  <h3> Descargas</h3>
-  {% block resource_list %}
+    <h3>Descargas</h3>
+
+    {% block resource_list %}
     {% if resources %}
-      <div class="row mb-1">
-        {% block resource_list_inner %}
-          {% for resource in resources %}
-            {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
-          {% endfor %}
-        {% endblock %}
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" style="width: 5%">Ícono</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col" style="width: 15%">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in resources %}
+                <tr>
+                    {# Columna 1: Ícono con enlace a metadatos #}
+                    <td class="text-center align-middle">
+                        <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=resource.id) }}"
+                           title="Ver metadatos del recurso">
+                            {{ h.format_icon(resource.get('format', ''), alt=resource.get('format', '').upper()) | safe }}
+                        </a>
+                    </td>
 
-        <div class="col-1">
-          <div class="resource-item"></div>
-        </div>
+                    {# Columna 2: Descripción (título + descripción) #}
+                    <td class="align-middle">
+                        <strong>{{ resource.get('name', _('Sin título')) }}</strong>
+                        {% if resource.get('description') %}
+                        <br><small class="text-muted">{{ resource.description | truncate(120) }}</small>
+                        {% endif %}
+                    </td>
 
-      </div>
+                    {# Columna 3: Botones de acción #}
+                    <td class="align-middle">
+                        <div class="btn-group" role="group">
+                            {# Botón: Descargar #}
+                            {% if resource.get('url') and h.is_url(resource.url) %}
+                            <a href="{{ resource.url }}"
+                               class="btn btn-sm btn-success"
+                               title="Descargar recurso"
+                               target="_blank" rel="noopener">
+                                <i class="fas fa-download"></i> Descargar
+                            </a>
+                            {% else %}
+                            <button class="btn btn-sm btn-secondary" disabled title="URL no disponible">
+                                <i class="fas fa-download"></i> Descargar
+                            </button>
+                            {% endif %}
+
+                            {# Botón: Ver metadatos #}
+                            <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=resource.id) }}"
+                               class="btn btn-sm btn-outline-primary"
+                               title="Ver metadatos">
+                                <i class="fas fa-info-circle"></i> Metadatos
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     {% else %}
-      {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
-          {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
-            <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
-          {% endtrans %}
-      {% else %}
-          <p class="empty">{{ _('This dataset has no data') }}</p>
-      {% endif %}
+    {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
+    {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
+    <p class="empty">Este conjunto de datos no tiene recursos, <a href="{{ url }}">¿por qué no agregar alguno?</a></p>
+    {% endtrans %}
+    {% else %}
+    <p class="empty">{{ _('Este conjunto de datos no tiene recursos') }}</p>
     {% endif %}
-    {% endblock %}
+    {% endif %}
+    {% endblock %}
 </section>
