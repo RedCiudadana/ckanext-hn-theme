@@ -638,7 +638,6 @@ body {
 .custom-dataset-card .dataset-header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   margin-bottom: 12px;
   flex-wrap: wrap;
   gap: 8px;
