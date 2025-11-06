@@ -588,7 +588,7 @@ body {
 .home-group-item:hover,
 .home-group-item:hover h3,
 .home-group-item:hover p {
-  color: #fff !important;
+  
   text-decoration: none;
 }
 
