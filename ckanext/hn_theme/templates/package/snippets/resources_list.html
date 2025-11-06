@@ -18,33 +18,17 @@ Example:
         <table class="table table-hover table-striped">
             <thead class="thead-light">
                 <tr>
-                    <th scope="col" style="width: 5%">Ícono</th>
+                    <th scope="col" class="text-center" style="width: 8%">Ícono</th>
                     <th scope="col">Descripción</th>
-                    <th scope="col" style="width: 15%">Acciones</th>
+                    <th scope="col" style="width: 25%">Acciones</th>
                 </tr>
             </thead>
             <tbody>
+                {% block resource_list_inner %}
                 {% for resource in resources %}
-                <tr>
-                    {# Columna 1: Ícono con enlace a metadatos #}
-                    <td class="text-center align-middle">
-                       
-                    </td>
-
-                    {# Columna 2: Descripción (título + descripción) #}
-                    <td class="align-middle">
-                       
-                    </td>
-
-                    {# Columna 3: Botones de acción #}
-                    <td class="align-middle">
-                        <div class="btn-group" role="group">
-                            {# Botón: Descargar #}
-                           
-                        </div>
-                    </td>
-                </tr>
+                {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
                 {% endfor %}
+                {% endblock %}
             </tbody>
         </table>
     </div>
