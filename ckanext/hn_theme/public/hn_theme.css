@@ -1,4 +1,4 @@
-:root {
+Ôªø:root {
   --hn-primary-color: #3c3c3b;
   --hn-secondary-color: #4d95cb;
   --hn-third-color: #008a87;
@@ -548,55 +548,60 @@ body {
 }
 
 .home-group-item {
-    background-color: #4994cd; /* Color principal (antes era hover) */
+    background-color: #4994cd;
     border-radius: 6px;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* ‚Üê Alinea el contenido ARRIBA (no al centro) */
     gap: 16px;
-    padding: 16px 8px;
+    padding: 16px;
     color: #fff;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
 }
+
+    .home-group-item .img {
+        flex-shrink: 0; /* Evita que la imagen se achate */
+    }
 
     .home-group-item img {
         width: 70px;
         height: auto;
-        flex-shrink: 0; /* Evita que la imagen se contraiga */
+        display: block;
     }
 
     .home-group-item .text {
         flex: 1;
-        min-height: 52px;
+        min-width: 0; /* Permite truncado si es necesario */
     }
 
     .home-group-item h3 {
         font-size: 1rem;
         line-height: 1.3;
-        margin: 0 0 8px;
-        color: inherit; /* Hereda el color del contenedor (blanco o negro) */
+        margin: 0 0 6px;
+        color: inherit;
+        font-weight: 600;
     }
 
-    .home-group-item p {
+    .home-group-item .count {
         font-size: 0.75rem;
         line-height: 1.4;
         margin: 0;
-        color: inherit; /* Hereda tambiÈn */
+        color: rgba(255, 255, 255, 0.9);
     }
 
-    /* ===== Estado HOVER (invertido) ===== */
+    /* ===== HOVER (invertido) ===== */
     .home-group-item:hover {
-        background-color: #fff; /* Blanco */
+        background-color: #fff;
         color: #000;
-        text-decoration: none;
-        /* Opcional: leve sombra para feedback visual */
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     }
 
-        /* Aseguramos que los hijos hereden el color en hover */
-        .home-group-item:hover,
         .home-group-item:hover h3,
-        .home-group-item:hover p {
-            color: #000 !important;
+        .home-group-item:hover .count {
+            color: inherit;
+        }
+
+        .home-group-item:hover .count {
+            color: rgba(0, 0, 0, 0.7);
         }
 
 .homepage [role=main],
@@ -639,7 +644,7 @@ body {
 .custom-dataset-card .dataset-header {
   display: flex;
   align-items: flex-start;
-  /*justify-content: space-between;*/
+  justify-content: space-between;
   margin-bottom: 12px;
   flex-wrap: wrap;
   gap: 8px;
@@ -878,16 +883,16 @@ body {
     /*border: 2px solid #eee;*/
 }
 
-/* TÌtulo centrado */
+/* T√≠tulo centrado */
     .org-title {
     font-size: 1.25rem;
     margin: 10px 0;
 }
 
-/* Contenedor de estadÌsticas */
+/* Contenedor de estad√≠sticas */
 .org-stats {
     display: flex;
-    /*justify-content: space-between;*/
+    justify-content: space-between;
     margin: 16px 0;
     gap: 8px;
 }
@@ -915,7 +920,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* BotÛn de seguir centrado */
+/* Bot√≥n de seguir centrado */
 .follow-button-container .btn {
     width: 100%;
     font-size: 0.8
