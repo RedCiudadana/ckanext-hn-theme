@@ -1,4 +1,4 @@
-{# 
+{#
 Renders a list of resources with icons and view links.
 
 resources - A list of resources to render
@@ -15,15 +15,15 @@ Example:
     {% block resource_list %}
     {% if resources %}
     <div class="table-responsive">
-        <table class="table table-hover table-striped">
+        <table id="resources-table" class="table table-hover table-striped">
             <thead class="thead-light">
                 <tr>
-                    <th scope="col" class="text-center" style="width: 8%"></th>
-                    <th scope="col"></th>
-                    <th scope="col" style="width: 25%"></th>
+                    <th scope="col" class="text-center" style="width: 8%">Formato</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col" style="width: 25%">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="resources-tbody">
                 {% block resource_list_inner %}
                 {% for resource in resources %}
                 {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
@@ -33,14 +33,72 @@ Example:
         </table>
     </div>
 
+    <!-- Paginador -->
+    <nav aria-label="Pagination" class="mt-4">
+        <ul id="pagination" class="pagination justify-content-center">
+            <!-- Se generará con JS -->
+        </ul>
+    </nav>
+
     {% else %}
-    {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
-    {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
-    <p class="empty">Este conjunto de datos no tiene recursos, <a href="{{ url }}">¿por qué no agregar alguno?</a></p>
-    {% endtrans %}
-    {% else %}
-    <p class="empty">{{ _('Este conjunto de datos no tiene recursos') }}</p>
-    {% endif %}
+    <!-- ... (mensaje vacío) ... -->
     {% endif %}
     {% endblock %}
 </section>
+
+<!-- Script de paginación -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const itemsPerPage = 10;
+  const tbody = document.getElementById('resources-tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const totalPages = Math.ceil(rows.length / itemsPerPage);
+
+  function showPage(page) {
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    rows.forEach((row, index) => {
+      row.style.display = (index >= start && index < end) ? '' : 'none';
+    });
+
+    updatePagination(page);
+  }
+
+  function updatePagination(currentPage) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    // Botón Anterior
+    const prev = document.createElement('li');
+    prev.classList.add('page-item');
+    if (currentPage === 1) prev.classList.add('disabled');
+    prev.innerHTML = `<a class="page-link" href="#" tabindex="-1">${'‹'}</a>`;
+    prev.onclick = (e) => { e.preventDefault(); if (currentPage > 1) showPage(currentPage - 1); };
+    pagination.appendChild(prev);
+
+    // Números de página
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement('li');
+      li.classList.add('page-item');
+      if (i === currentPage) li.classList.add('active');
+      li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+      li.onclick = (e) => { e.preventDefault(); showPage(i); };
+      pagination.appendChild(li);
+    }
+
+    // Botón Siguiente
+    const next = document.createElement('li');
+    next.classList.add('page-item');
+    if (currentPage === totalPages) next.classList.add('disabled');
+    next.innerHTML = `<a class="page-link" href="#">${'›'}</a>`;
+    next.onclick = (e) => { e.preventDefault(); if (currentPage < totalPages) showPage(currentPage + 1); };
+    pagination.appendChild(next);
+  }
+
+  // Iniciar en página 1
+  if (rows.length > 0) {
+    showPage(1);
+  }
+});
+</script>
