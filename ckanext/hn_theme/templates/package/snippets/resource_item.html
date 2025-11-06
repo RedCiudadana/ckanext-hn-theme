@@ -21,10 +21,7 @@
 
     {# 2. Descripción (nombre + descripción) #}
     <td class="align-middle">
-        <strong>{{ res.get('name') or _('Sin título') }}</strong>
-        {% if res.get('description') %}
-        <br><small class="text-muted">{{ res.description | truncate(120) }}</small>
-        {% endif %}
+        <strong>{{ res.get('name') or _('Sin título') }}</strong>        
     </td>
 
     {# 3. Acciones: Descargar + Metadatos #}
