@@ -548,8 +548,7 @@ body {
 }
 
 .home-group-item {
-    background-color: #4994cdff;
-    color: #fff;
+    color: #4994cdff;
     border-radius: 6px;
     display: flex;
     justify-content: space-between;
@@ -583,7 +582,7 @@ body {
 }
 
     .home-group-item:hover {
-        background-color: #fff;        
+        background-color: #fff;      
     }
 
 .home-group-item:hover,
