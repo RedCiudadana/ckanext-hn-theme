@@ -1,12 +1,12 @@
 :root {
-    --hn-primary-color: #4d95cb;
-    --hn-secondary-color: #3c3c3b;
-    --hn-third-color: #008a87;
-    --hn-four-color: #b3b3b3;
-    --hn-fifth-color: #88cfe0;
-    --hn-header-color: #1a318e;
-    --hn-border-color: #3db4c5;
-    --hn-body-font: 'Poppins';
+  --hn-primary-color: #3c3c3b;
+  --hn-secondary-color: #4d95cb;
+  --hn-third-color: #008a87;
+  --hn-four-color: #b3b3b3;
+  --hn-fifth-color: #88cfe0;
+  --hn-header-color: #1a318e;
+  --hn-border-color: #3db4c5;
+  --hn-body-font: 'Poppins';
 }
 
 @font-face {
@@ -548,13 +548,15 @@ body {
 }
 
 .home-group-item {
-  background-color: #fff;
-  border-radius: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 8px;
+    background-color: #4994cdff;
+    color: #fff !important;
+    
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 8px;
 }
 
 .home-group-item img {
@@ -581,10 +583,9 @@ body {
   color: #000; 
 }
 
-.home-group-item:hover {
-  background-color: #4994cdff;
-  color: #fff !important;
-}
+    .home-group-item:hover {
+        background-color: #fff;
+    }
 
 .home-group-item:hover,
 .home-group-item:hover h3,
