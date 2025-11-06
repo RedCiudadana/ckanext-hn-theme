@@ -6,7 +6,9 @@
 <tr data-id="{{ res.id }}">
     {# 1. Ícono con enlace a metadatos #}
     <td class="text-center align-middle">
-        
+        <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+            <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
+        </a>
     </td>
 
     {# 2. Descripción (nombre + descripción) #}
