@@ -31,7 +31,7 @@
                 {% if h.check_access('package_update', {'id':pkg.id }) %}
                 <li>{% link_for _('Edit resource'), named_route=pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id, class_='btn btn-secondary', icon='pencil' %}</li>
                 {% block action_manage_inner %}{% endblock %}
-                <li>prueba{% link_for _('Views'), named_route=pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id, class_='btn btn-secondary', icon='chart-bar' %}</li>
+                <li>{% link_for _('Views'), named_route=pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id, class_='btn btn-secondary', icon='chart-bar' %}</li>
                 {% endif %}
                 {% endblock action_manage %}
                 {% if res.url and h.is_url(res.url) %}
@@ -134,6 +134,20 @@
 {% endblock %}
 
 {% block primary_content %}
+<section id="auto-preview">
+    <h3>Vista previa (automática)</h3>
+    <div class="data-viewer" data-module="data-viewer"
+         data-module-resource-url="{{ h.url_for('resource.download', id=pkg.name, resource_id=resource.id, qualified=True) }}"
+         data-module-format="{{ resource.format.lower() }}">
+        <p>Cargando vista previa…</p>
+    </div>
+</section>
+
+<script>// Inicializa el data-viewer si está disponible
+  if (typeof ckan !== 'undefined' && ckan.moduleRegistry && ckan.moduleRegistry['data-viewer']) {
+    ckan.moduleRegistry['data-viewer'].initialize();
+  }</script>
+
   {% block resource_additional_information %}
     {% if res %}
 <section class="module">
