@@ -7,125 +7,119 @@
 
 {% block content %}
 <div class="homepage">
-    <div id="content" class="container">
-        {{ self.flash() }}
+  <!-- test-snippet  -->
+  <div id="content" class="container">
+    {{ self.flash() }}
+  </div>
+  {% block primary_content %}
+  <div role="main">
+    <div class="main hero">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            {% block search %}
+            <!-- content-search-->
+            {% snippet 'home/snippets/search.html', search_facets=search_facets %}
+            {% endblock %}
+          </div>
+        </div>
+        <div class="floating-banner shadow">
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <img src="/img/datos-1.png" alt="">
+              <div>
+                <a href="/pages/datos-abiertos" target="_blank">
+                  <h2>{{ _('¿Qué son los datos abiertos?') }}</h2>
+                </a>
+                <p>{{ _('Los datos abiertos son información pública digital, accesible, reutilizable y libre de
+                  restricciones legales o técnicas.')}}</p>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <img src="/img/datos-2.png" alt="">
+              <div>
+                <a href="{{ h.url_for('dashboard.datasets') }}">
+                  <h2>{{ _('Datos abiertos disponibles.') }}</h2>
+                </a>
+                <p>{{ _('Explora, descarga y reutiliza datos públicos para generar conocimiento, innovación y
+                  transparencia.')}}</p>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <img src="/img/datos-3.png" alt="">
+              <div>
+                <a href="/pages/eventos" target="_blank">
+                  <h2>{{ _('Eventos de datos abiertos.') }}</h2>
+                </a>
+                <p>{{ _('Promovemos el diálogo, el aprendizaje y la colaboración en torno a los datos abiertos.') }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    {% block primary_content %}
-    <div role="main">
-
-        <!-- 🔹 Sección 1: Búsqueda (sin cambios) -->
-        <div class="main hero">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        {% block search %}
-                        {% snippet 'home/snippets/search.html', search_facets=search_facets %}
-                        {% endblock %}
-                    </div>
-                </div>
-            </div>
+    <div class="main module-feeds">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            {# Note: this featured_group block is used as an example in the theming
+            tutorial in the docs! If you change this code, be sure to check
+            whether you need to update the docs. #}
+            {# Start template block example. #}
+            {% block featured_group %}
+            {% snippet 'home/snippets/featured_group.html' %}
+            {% endblock %}
+            {# End template block example. #}
+          </div>
         </div>
-
-        <!-- 🔹 Sección 2: Banner flotante (¿Qué son?, Disponibles, Eventos) -->
-        <div class="section-block bg-light py-5">
-            <div class="container">
-                <div class="floating-banner shadow rounded-3 overflow-hidden">
-                    <div class="row g-0">
-                        {% for item in [
-                        {
-                        'img': '/img/datos-1.png',
-                        'title': _('¿Qué son los datos abiertos?'),
-                        'url': '/pages/datos-abiertos',
-                        'text': _('Los datos abiertos son información pública digital, accesible, reutilizable y libre de restricciones legales o técnicas.'),
-                        'target': '_blank'
-                        },
-                        {
-                        'img': '/img/datos-2.png',
-                        'title': _('Datos abiertos disponibles.'),
-                        'url': h.url_for('dashboard.datasets'),
-                        'text': _('Explora, descarga y reutiliza datos públicos para generar conocimiento, innovación y transparencia.'),
-                        'target': '_self'
-                        },
-                        {
-                        'img': '/img/datos-3.png',
-                        'title': _('Eventos de datos abiertos.'),
-                        'url': '/pages/eventos',
-                        'text': _('Promovemos el diálogo, el aprendizaje y la colaboración en torno a los datos abiertos.'),
-                        'target': '_blank'
-                        }
-                        ] %}
-                        <div class="col-12 col-md-4 border-end">
-                            <div class="p-4 text-center h-100 d-flex flex-column justify-content-center">
-                                <img src="{{ item.img }}" alt="" class="mx-auto mb-3" style="max-height: 80px; width: auto;">
-                                <div>
-                                    <a href="{{ item.url }}" target="{{ item.target }}" class="text-decoration-none">
-                                        <h3 class="h5">{{ item.title }}</h3>
-                                    </a>
-                                    <p class="text-muted mb-0">{{ item.text }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 🔹 Sección 3: Categorías de datos (featured_group) -->
-        <div class="section-block py-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <h2 class="text-center fs-2 mb-4">{{ _('Categorías de datos') }}</h2>
-                        {% block featured_group %}
-                        {% snippet 'home/snippets/featured_group.html' %}
-                        {% endblock %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 🔹 Sección 4: Novedades (blog) -->
-        {% set blogs = h.get_recent_blog_posts(number=4) %}
-        {% if blogs %}
-        <div class="section-block bg-light py-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <h2 class="fs-2 mb-4">{{ _('Novedades') }}</h2>
-                        <div class="page-list">
-                            <div class="row g-4">
-                                {% for post in blogs %}
-                                <div class="col-md-3">
-                                    <div class="card h-100 shadow-sm text-start">
-                                        <div class="card-body d-flex flex-column">
-                                            <h3 class="card-title h5">
-                                                <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="text-dark text-decoration-none">
-                                                    {{ post.title or post.name }}
-                                                </a>
-                                            </h3>
-                                            <div class="card-text mb-3 flex-grow-1">
-                                                {{ h.markdown_extract(post.content, 100) }}
-                                            </div>
-                                            {% if post.publish_date %}
-                                            <a href="{{ h.url_for('pages.blog_show', page='/' + post.name) }}" class="mt-auto text-decoration-underline">
-                                                {{ _('Leer más') }} <i class="fa fa-arrow-right ms-1"></i>
-                                            </a>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
+      </div>
     </div>
-    {% endblock %}
+
+    {% set blogs = h.get_recent_blog_posts(number=4) %}
+    {% if blogs %}
+    <div class="main module-feeds">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <h2 class="fs-2">{{ _('Novedades') }}</h2>
+
+            <div class="page-list">
+              <div class="row">
+                {% for post in blogs %}
+                <div class="col-md-3">
+                  <div class="card h-100 shadow text-start">
+                    <div class="card-body">
+                      <h3 class="card-title h5">
+                        <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="text-dark">{{
+                          post.title or post.name }}</a>
+                      </h3>
+                      {% if post.publish_date %}
+                      <p class="text-muted small mb-3 d-none">
+                        <i class="fa fa-calendar me-2"></i>{{ h.render_datetime(post.publish_date) }}
+                      </p>
+                      {% endif %}
+                      <div class="card-text mb-3">
+                        {{ h.markdown_extract(post.content, 100) }}
+                      </div>
+                      {% if post.publish_date %}
+                      <a class="text-decoration-underline"
+                        href="{{ h.url_for('pages.blog_show', page='/' + post.name) }}">
+                        {{ _('Leer más') }} <i class="fa fa-arrow-right ms-1"></i>
+                      </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endblock %}
 </div>
 {% endblock %}
