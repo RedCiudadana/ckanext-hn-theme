@@ -28,43 +28,19 @@ Example:
                 <tr>
                     {# Columna 1: Ícono con enlace a metadatos #}
                     <td class="text-center align-middle">
-                        <!--<a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=resource.id) }}"
-                           title="Ver metadatos del recurso">
-                            {{ h.format_icon(resource.get('format', ''), alt=resource.get('format', '').upper()) | safe }}
-                        </a>-->
+                       
                     </td>
 
                     {# Columna 2: Descripción (título + descripción) #}
                     <td class="align-middle">
-                        <!--<strong>{{ resource.get('name', _('Sin título')) }}</strong>
-                        {% if resource.get('description') %}
-                        <br><small class="text-muted">{{ resource.description | truncate(120) }}</small>
-                        {% endif %}-->
+                       
                     </td>
 
                     {# Columna 3: Botones de acción #}
                     <td class="align-middle">
                         <div class="btn-group" role="group">
                             {# Botón: Descargar #}
-                            <!--{% if resource.get('url') and h.is_url(resource.url) %}
-                            <a href="{{ resource.url }}"
-                               class="btn btn-sm btn-success"
-                               title="Descargar recurso"
-                               target="_blank" rel="noopener">
-                                <i class="fas fa-download"></i> Descargar
-                            </a>
-                            {% else %}
-                            <button class="btn btn-sm btn-secondary" disabled title="URL no disponible">
-                                <i class="fas fa-download"></i> Descargar
-                            </button>
-                            {% endif %}
-
-                            {# Botón: Ver metadatos #}
-                            <a href="{{ h.url_for(controller='package', action='resource_read', id=pkg.name, resource_id=resource.id) }}"
-                               class="btn btn-sm btn-outline-primary"
-                               title="Ver metadatos">
-                                <i class="fas fa-info-circle"></i> Metadatos
-                            </a>-->
+                           
                         </div>
                     </td>
                 </tr>
