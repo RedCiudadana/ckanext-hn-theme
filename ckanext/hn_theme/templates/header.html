@@ -21,12 +21,15 @@
     {% set org_type = h.default_group_type('organization') %}
     {% set group_type = h.default_group_type('group') %}
 
-    {{ h.build_nav_main(
+{{
+ h.build_nav_main(
     (dataset_type ~ '.search', h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets'), ["dataset", "resource"]),
     (org_type ~ '.index',
         h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'), ['organization']),
     (group_type ~ '.index',
         h.humanize_entity_type('group', group_type, 'main nav') or _('Groups'), ['group']),
-    ('home.about', _('About')) ) }}
-    <li><a href="/stats">Estadísticas</a></li>
+    ('home.about', _('About')) )
+}}
+<li><a href="/stats">Estadísticas</a></li>
+{% snippet 'snippets/user_actions.html' %}
 {% endblock %}
