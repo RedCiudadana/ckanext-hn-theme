@@ -1,7 +1,7 @@
 {# home/snippets/group_item.html #}
 {% set image = group.image_display_url or group.image_url or '/base/images/placeholder-group.png' %}
 
-<a href="{{ h.url_for('group.read', id=group.name) }}"
+<a href="{{ url) }}"
    class="card h-100 border-0 shadow-sm text-decoration-none text-body d-flex flex-column"
    aria-label="{{ group.title or group.name }}">
 
