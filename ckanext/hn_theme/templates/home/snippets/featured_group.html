@@ -1,13 +1,27 @@
 {% set groups = h.get_featured_groups(15) %}
+<div class="featured-groups-section py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="fs-2">{{ _('Categorías de datos') }}</h2>
+                <p class="text-muted">
+                    Selecciona las categorías de tu interés para crear y administrar las colecciones de conjuntos de datos.
+                </p>
+            </div>
+        </div>
 
-<div class="row featured_groups-grid">
-  <div class="col-12 text-center">
-    <h1>{{ _('Categorías de datos') }}</h1>
-    <p>Selecciona las categorías de tu interés para crear y administrar las colecciones de conjuntos de datos.</p>
-  </div>
-  {% for group in groups %}
-    {% snippet "home/snippets/group_item.html", group=group, position=False %}
-  {% endfor %}
-
-  <!-- dataset found -->
+        {% if groups %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xxl-5 g-4">
+            {% for group in groups %}
+            <div class="col">
+                {% snippet "home/snippets/group_item.html", group=group %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="col-12 text-center">
+            <p class="text-muted">{{ _('No hay categorías disponibles.') }}</p>
+        </div>
+        {% endif %}
+    </div>
 </div>

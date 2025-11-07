@@ -541,34 +541,24 @@ body {
   margin: 0;
 }
 
-.featured_groups {
-  color: #494949;
-  gap: 16px;
+.featured-groups-section .card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
-.featured_groups-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px; /* Usa el gap que ya definiste */
-    margin-top: 1.5rem;
-}
-
-    .featured_groups-grid > a {
-        flex: 1 1 calc(20% - 13px); /* 5 columnas: 100%/5 = 20%, menos gap */
-        min-width: 180px; /* Evita que se encojan demasiado en pantallas grandes */
+    .featured-groups-section .card:hover .card-footer {
+        background-color: #4994cd;
+        color: white;
     }
 
-@media (max-width: 768px) {
-    .featured_groups-grid > a {
-        flex: 1 1 calc(50% - 8px); /* 2 por fila en tablet */
-    }
-}
+        .featured-groups-section .card:hover .card-footer small {
+            color: white !important;
+        }
 
-@media (max-width: 576px) {
-    .featured_groups-grid > a {
-        flex: 1 1 100%; /* 1 por fila en móvil */
+    .featured-groups-section .card:hover .card-title,
+    .featured-groups-section .card:hover .card-text,
+    .featured-groups-section .card:hover .badge {
+        color: #212529;
     }
-}
 
 .home-group-item {
     background-color: #4994cd;
