@@ -18,22 +18,18 @@
         </h3>
 
         {% if group.description %}
-        <p class="card-text text-muted text-center small flex-grow-1">
-            {{ group.description | truncate(100) }}
-        </p>
+       
         {% endif %}
 
         <div class="text-center mt-auto">
             {% set package_count = group.package_count or 0 %}
-            <span class="badge bg-light text-dark">
-                {{ package_count }} {{ _('conjunto') if package_count == 1 else _('conjuntos') }} de datos
-            </span>
+            
         </div>
     </div>
 
     <div class="card-footer bg-white py-2 text-center">
         <small class="text-primary text-decoration-underline">
-            {{ _('Ver categoría') }}
+            
         </small>
     </div>
 </a>
