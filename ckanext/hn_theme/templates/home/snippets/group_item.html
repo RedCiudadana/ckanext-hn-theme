@@ -1,3 +1,39 @@
 {# home/snippets/group_item.html #}
 {% set image = group.image_display_url or group.image_url or '/base/images/placeholder-group.png' %}
 
+<a href="{{ url) }}"
+   class="card h-100 border-0 shadow-sm text-decoration-none text-body d-flex flex-column"
+   aria-label="{{ group.name }}">
+
+    <div class="card-body d-flex flex-column p-4">
+        <div class="text-center mb-3">
+            <img src="{{ group.image_display_url or h.url_for_static('/base/images/placeholder-group.png') }}"
+                 alt="{{ group.name }}"
+                 class="img-fluid rounded-circle"
+                 style="width: 72px; height: 72px; object-fit: cover;">
+        </div>
+
+        <h3 class="card-title h5 text-center mb-2">
+            {{ group.name }}
+        </h3>
+
+        {% if group.description %}
+        <p class="card-text text-muted text-center small flex-grow-1">
+            {{ group.description | truncate(100) }}
+        </p>
+        {% endif %}
+
+        <div class="text-center mt-auto">
+            {% set package_count = group.package_count or 0 %}
+            <span class="badge bg-light text-dark">
+                {{ package_count }} {{ _('conjunto') if package_count == 1 else _('conjuntos') }} de datos
+            </span>
+        </div>
+    </div>
+
+    <div class="card-footer bg-white py-2 text-center">
+        <small class="text-primary text-decoration-underline">
+            {{ _('Ver categoría') }}
+        </small>
+    </div>
+</a>
