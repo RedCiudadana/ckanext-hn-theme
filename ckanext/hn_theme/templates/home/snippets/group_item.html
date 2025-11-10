@@ -1,16 +1,21 @@
 {% set type = group.type or 'group' %}
 {% set url = h.url_for(type ~ '.read', id=group.name) %}
 
-<a href="{{ url }}" class="home-group-item col-12 d-flex shadow">
-  <div class="img">
-    <img src="{{ group.image_display_url or h.url_for_static('/base/images/placeholder-group.png') }}" alt="{{ group.name }}" class="media-image img-fluid">
-  </div>
-  <div class="text">
-    <h3>{{ group.display_name }}</h3>
-    {% if group.package_count %}
-      <p class="count">{{ ungettext('{num} Dataset', '{num} Datasets', group.package_count).format(num=group.package_count) }}</p>
-    {% elif group.package_count == 0 %}
-      <p class="count">{{ _('0 Datasets') }}</p>
-    {% endif %}
-  </div>
+<a href="{{ url }}" class="home-group-item d-block shadow-sm h-100 text-decoration-none">
+    <div class="img mb-2">
+        <img src="{{ group.image_display_url or h.url_for_static('/base/images/placeholder-group.png') }}"
+             alt="{{ group.name }}"
+             class="media-image img-fluid rounded"
+             style="width: 100%; height: 120px; object-fit: cover;">
+    </div>
+    <div class="text text-center">
+        <h3 class="h5">{{ group.display_name }}</h3>
+        {% if group.package_count %}
+        <p class="count small text-muted mt-1">
+            {{ ungettext('{num} Dataset', '{num} Datasets', group.package_count).format(num=group.package_count) }}
+        </p>
+        {% else %}
+        <p class="count small text-muted mt-1">0 Datasets</p>
+        {% endif %}
+    </div>
 </a>

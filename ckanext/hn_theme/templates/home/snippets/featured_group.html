@@ -1,14 +1,51 @@
 {% set groups = h.get_featured_groups(15) %}
 
-<div class="row featured_groups-grid">
-    <div class="col-12 text-center">
+<div class="row mb-5">
+    <div class="col-12 text-center mb-4">
         <h1>{{ _('Categorías de datos') }}</h1>
         <p>Selecciona las categorías de tu interés para crear y administrar las colecciones de conjuntos de datos.</p>
     </div>
-    {% for group in groups %}
-    {% snippet "home/snippets/group_item.html", group=group, position=False %}
-    {% endfor %}
 
-    <!-- dataset found -->
+    {% if groups %}
+    <div class="col-12">
+        <div id="categoriasCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+            <!-- Controles -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#categoriasCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#categoriasCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+
+            <!-- Slides -->
+            <div class="carousel-inner">
+                {% for group in groups %}
+                {% set is_active = loop.index0 == 0 %}
+
+                <!-- Iniciar nuevo slide cada 4 elementos -->
+                {% if loop.index0 % 4 == 0 %}
+                <div class="carousel-item {{ 'active' if is_active }}">
+                    <div class="row g-4 justify-content-center">
+                        {% endif %}
+
+                        <div class="col-md-3 col-sm-6">
+                            {% snippet "home/snippets/group_item.html", group=group %}
+                        </div>
+
+                        <!-- Cerrar slide cada 4 elementos o al final -->
+                        {% if (loop.index0 + 1) % 4 == 0 or loop.last %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center">
+        <p class="text-muted">{{ _('No hay categorías disponibles.') }}</p>
+    </div>
+    {% endif %}
 </div>
-
