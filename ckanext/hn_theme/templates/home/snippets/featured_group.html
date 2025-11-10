@@ -26,15 +26,14 @@
 
                 <!-- Iniciar nuevo slide cada 4 elementos -->
                 {% if loop.index0 % 4 == 0 %}
-                <div class="carousel-item {{ 'active' if is_active }}">
+                <div class="carousel-item {{ 'active' if loop.index0 == 0 }}">
                     <div class="row g-4 justify-content-center">
                         {% endif %}
 
-                        <div class="col-md-3 col-sm-6">
+                        <div class="col-md-3 col-sm-6 d-flex">
                             {% snippet "home/snippets/group_item.html", group=group %}
                         </div>
 
-                        <!-- Cerrar slide cada 4 elementos o al final -->
                         {% if (loop.index0 + 1) % 4 == 0 or loop.last %}
                     </div>
                 </div>

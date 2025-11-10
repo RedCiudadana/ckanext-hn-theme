@@ -569,6 +569,15 @@ body {
     }
 }
 
+#categoriasCarousel .carousel-inner {
+    overflow: visible !important;
+}
+
+.home-group-item {
+    min-height: 220px;
+    border-radius: 12px;
+}
+
 .home-group-item {
     background: linear-gradient(135deg, rgba(0, 86, 163, 0.9) -29%, rgba(11, 180, 170, 0.9) 100%);
     border-radius: 6px;
