@@ -5,9 +5,16 @@
     <h1>{{ _('Categorías de datos') }}</h1>
     <p>Selecciona las categorías de tu interés para crear y administrar las colecciones de conjuntos de datos.</p>
   </div>
+
+    <!-- CARRUSEL -->
+  <div class="col-12">
+    <div class="carousel-container">
+      <div class="carousel-wrapper" id="carouselWrapper">
   {% for group in groups %}
     {% snippet "home/snippets/group_item.html", group=group, position=False %}
   {% endfor %}
-
+    </div>
+    </div>
+</div>  
   <!-- dataset found -->
 </div>
