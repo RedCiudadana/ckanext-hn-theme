@@ -73,61 +73,13 @@
             {% snippet 'home/snippets/featured_group.html' %}
             {% endblock %}
             {# End template block example. #}
-            
+
           </div>
         </div>
       </div>
     </div>
 
-    {% set blogs = h.get_recent_blog_posts(number=4) %}
-    {% if blogs %}
-    <div class="main module-feeds">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 text-center">
-            <h1>{{ _('Novedades') }}</h1>
-
-            <div class="page-list">
-              <div class="row">
-                {% for post in blogs %}
-                <div class="col-md-3">
-                  <div class="card h-100 shadow text-start">
-                    <div class="card-body">
-                      <h3 class="card-title h5">
-                        <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="text-dark">{{
-                          post.title or post.name }}</a>
-                      </h3>
-                      {% if post.publish_date %}
-                      <p class="text-muted small mb-3 d-none">
-                        <i class="fa fa-calendar me-2"></i>{{ h.render_datetime(post.publish_date) }}
-                      </p>
-                      {% endif %}
-                      <div class="card-text mb-3">
-                        {{ h.markdown_extract(post.content, 100) }}
-                      </div>
-                      {% if post.publish_date %}
-                      <a class="text-decoration-underline"
-                        href="{{ h.url_for('pages.blog_show', page='/' + post.name) }}">
-                        {{ _('Leer más') }} <i class="fa fa-arrow-right ms-1"></i>
-                      </a>
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
-  </div>
-  {% endblock %}
-</div>
-{% endblock %}
-
-<script>
+    <script>
 // Script del carrusel - Lee los elementos del DOM
 (function() {
   let currentSlide = 0;
@@ -266,3 +218,51 @@
   }
 })();
 </script>
+
+    {% set blogs = h.get_recent_blog_posts(number=4) %}
+    {% if blogs %}
+    <div class="main module-feeds">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <h1>{{ _('Novedades') }}</h1>
+
+            <div class="page-list">
+              <div class="row">
+                {% for post in blogs %}
+                <div class="col-md-3">
+                  <div class="card h-100 shadow text-start">
+                    <div class="card-body">
+                      <h3 class="card-title h5">
+                        <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="text-dark">{{
+                          post.title or post.name }}</a>
+                      </h3>
+                      {% if post.publish_date %}
+                      <p class="text-muted small mb-3 d-none">
+                        <i class="fa fa-calendar me-2"></i>{{ h.render_datetime(post.publish_date) }}
+                      </p>
+                      {% endif %}
+                      <div class="card-text mb-3">
+                        {{ h.markdown_extract(post.content, 100) }}
+                      </div>
+                      {% if post.publish_date %}
+                      <a class="text-decoration-underline"
+                        href="{{ h.url_for('pages.blog_show', page='/' + post.name) }}">
+                        {{ _('Leer más') }} <i class="fa fa-arrow-right ms-1"></i>
+                      </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endblock %}
+</div>
+{% endblock %}
