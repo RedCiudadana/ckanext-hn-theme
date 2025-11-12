@@ -1043,6 +1043,6 @@ body {
   
   @media (min-width: 1024px) {
     .carousel-slide .home-group-item {
-      flex: 0 0 calc(33.333% - 13.33px);
+      flex: 0 0 calc(25% - 13.33px);
     }
   }

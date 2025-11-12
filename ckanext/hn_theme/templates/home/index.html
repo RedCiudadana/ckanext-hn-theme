@@ -83,7 +83,7 @@
 // Script del carrusel - Lee los elementos del DOM
 (function() {
   let currentSlide = 0;
-  let cardsPerSlide = 3;
+  let cardsPerSlide = 4;
   let allItems = [];
   
   function updateCardsPerSlide() {
@@ -92,7 +92,7 @@
     } else if (window.innerWidth < 1024) {
       cardsPerSlide = 2;
     } else {
-      cardsPerSlide = 3;
+      cardsPerSlide = 4;
     }
   }
 
