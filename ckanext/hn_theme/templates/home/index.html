@@ -66,15 +66,158 @@
             {# Note: this featured_group block is used as an example in the theming
             tutorial in the docs! If you change this code, be sure to check
             whether you need to update the docs. #}
+
+
             {# Start template block example. #}
             {% block featured_group %}
             {% snippet 'home/snippets/featured_group.html' %}
             {% endblock %}
             {# End template block example. #}
+
           </div>
         </div>
       </div>
     </div>
+
+    <script>
+// Script del carrusel - Lee los elementos del DOM
+(function() {
+  let currentSlide = 0;
+  let cardsPerSlide = 4;
+  let allItems = [];
+  
+  function updateCardsPerSlide() {
+    if (window.innerWidth < 768) {
+      cardsPerSlide = 1;
+    } else if (window.innerWidth < 1024) {
+      cardsPerSlide = 2;
+    } else {
+      cardsPerSlide = 4;
+    }
+  }
+
+  function initCarousel() {
+    const wrapper = document.getElementById('carouselWrapper');
+    if (!wrapper) return;
+    
+    // Obtener todos los elementos .home-group-item del DOM
+    allItems = Array.from(wrapper.querySelectorAll('.home-group-item'));
+    
+    if (allItems.length === 0) return;
+    
+    // Limpiar el wrapper
+    wrapper.innerHTML = '';
+    
+    // Crear slides agrupando los items
+    const totalSlides = Math.ceil(allItems.length / cardsPerSlide);
+    
+    for (let i = 0; i < totalSlides; i++) {
+      const slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      
+      const startIdx = i * cardsPerSlide;
+      const endIdx = Math.min(startIdx + cardsPerSlide, allItems.length);
+      
+      for (let j = startIdx; j < endIdx; j++) {
+        slide.appendChild(allItems[j].cloneNode(true));
+      }
+      
+      wrapper.appendChild(slide);
+    }
+    
+    createIndicators(totalSlides);
+    updateCarousel();
+  }
+
+  function createIndicators(total) {
+    const indicatorsContainer = document.getElementById('indicators');
+    if (!indicatorsContainer) return;
+    
+    indicatorsContainer.innerHTML = '';
+    
+    for (let i = 0; i < total; i++) {
+      const indicator = document.createElement('button');
+      indicator.className = 'indicator';
+      if (i === 0) indicator.classList.add('active');
+      indicator.addEventListener('click', function() { goToSlide(i); });
+      indicatorsContainer.appendChild(indicator);
+    }
+  }
+
+  function updateCarousel() {
+    const wrapper = document.getElementById('carouselWrapper');
+    if (!wrapper) return;
+    
+    wrapper.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+    
+    const indicators = document.querySelectorAll('.indicator');
+    indicators.forEach(function(ind, idx) {
+      if (idx === currentSlide) {
+        ind.classList.add('active');
+      } else {
+        ind.classList.remove('active');
+      }
+    });
+    
+    const totalSlides = Math.ceil(allItems.length / cardsPerSlide);
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (prevBtn) prevBtn.disabled = currentSlide === 0;
+    if (nextBtn) nextBtn.disabled = currentSlide === totalSlides - 1;
+  }
+
+  function goToSlide(index) {
+    const totalSlides = Math.ceil(allItems.length / cardsPerSlide);
+    currentSlide = Math.max(0, Math.min(index, totalSlides - 1));
+    updateCarousel();
+  }
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function() {
+      goToSlide(currentSlide - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function() {
+      goToSlide(currentSlide + 1);
+    });
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') goToSlide(currentSlide - 1);
+    if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      const oldCardsPerSlide = cardsPerSlide;
+      updateCardsPerSlide();
+      if (oldCardsPerSlide !== cardsPerSlide) {
+        currentSlide = 0;
+        initCarousel();
+      }
+    }, 250);
+  });
+
+  // Inicializar cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCardsPerSlide();
+      initCarousel();
+    });
+  } else {
+    updateCardsPerSlide();
+    initCarousel();
+  }
+})();
+</script>
 
     {% set blogs = h.get_recent_blog_posts(number=4) %}
     {% if blogs %}
