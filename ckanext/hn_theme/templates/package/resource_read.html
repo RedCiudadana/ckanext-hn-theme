@@ -164,37 +164,51 @@
               })
               .finally(() => collapse.setAttribute('data-loaded', 'true'));
           } else {
-            // ✅ Opción 2: Descarga directa (solo si CKAN permite acceso público al recurso)
-            // Construimos URL de descarga estándar de CKAN
-            const downloadUrl = '/dataset/{{ package.name }}/resource/' + resourceId + '/download/{{ res.name | replace(" ", "%20") if res.name else "recurso.csv" }}';
+              // ✅ Opción 2a: Si es URL externa → usar proxy de CKAN
+              const isExternal = !('{{ res.url_type }}' === 'upload');
+              const proxyUrl = isExternal
+                  ? '/api/3/action/resource_proxy?url=' + encodeURIComponent('{{ res.url | replace("\\", "\\\\") }}')
+                  : '/dataset/{{ package.name }}/resource/' + resourceId + '/download/{{ res.name | replace(" ", "%20") if res.name else "recurso.csv" }}';
 
-            fetch(downloadUrl)
-              .then(r => {
-                if (!r.ok) throw new Error('HTTP ' + r.status);
-                return r.text();
-              })
-              .then(text => {
-                const lines = text.split('\n').filter(l => l.trim());
-                if (lines.length < 1) throw new Error('empty');
-                const headers = lines[0].split(',').map(h => h.trim());
-                const rows = lines.slice(1, 6).map(line => line.split(',').map(cell => cell.trim()));
-                renderTable(content, headers, rows);
-              })
-              .catch(err => {
-                console.warn('Preview fallback failed:', err);
-                content.innerHTML = `
-                  <div class="p-3 text-center">
-                    <p class="mb-2"><i class="fa fa-exclamation-triangle text-warning me-1"></i> {{ _('No se pudo cargar la vista previa') }}</p>
-                    <p class="small text-muted mb-2">{{ _('Este recurso aún no ha sido procesado para vistas interactivas.') }}</p>
-                    {% if h.check_access('resource_view_create', {'resource_id': res.id}) %}
-                    <a href="{{ h.url_for(pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id) }}"
-                       class="btn btn-sm btn-outline-primary">
-                      <i class="fa fa-cogs me-1"></i> {{ _('Procesar ahora') }}
-                    </a>
-                    {% endif %}
-                  </div>`;
-              })
-              .finally(() => collapse.setAttribute('data-loaded', 'true'));
+              fetch(proxyUrl)
+                  .then(r => {
+                      if (!r.ok) throw new Error('HTTP ' + r.status);
+                      return r.text();
+                  })
+                  .then(text => {
+                      // Truncar para evitar sobrecarga (solo primeros 50 KB)
+                      if (text.length > 50000) {
+                          // Buscar el final de la quinta línea (o truncar con \n)
+                          const lines = text.split('\n');
+                          text = lines.slice(0, 6).join('\n');
+                      }
+                      const lines = text.split('\n').filter(l => l.trim());
+                      if (lines.length < 1) throw new Error('empty');
+                      const headers = lines[0].split(',').map(h => h.trim());
+                      const rows = lines.slice(1, 6).map(line => line.split(',').map(cell => cell.trim()));
+                      renderTable(content, headers, rows);
+                  })
+                  .catch(err => {
+                      console.warn('Preview failed:', err);
+                      content.innerHTML = `
+        <div class="p-3 text-center">
+          <p class="mb-2"><i class="fa fa-exclamation-triangle text-warning me-1"></i> {{ _('No se pudo cargar la vista previa') }}</p>
+          <p class="small text-muted mb-2">
+            {% if '{{ res.url_type }}' == 'upload' %}
+              {{ _('El recurso no está accesible o es demasiado grande.') }}
+            {% else %}
+              {{ _('No se pudo acceder al recurso externo. Puede estar caído o bloqueado.') }}
+            {% endif %}
+          </p>
+          {% if h.check_access('resource_view_create', {'resource_id': res.id}) %}
+          <a href="{{ h.url_for(pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id) }}"
+             class="btn btn-sm btn-outline-primary">
+            <i class="fa fa-cogs me-1"></i> {{ _('Procesar ahora') }}
+          </a>
+          {% endif %}
+        </div>`;
+                  })
+                  .finally(() => collapse.setAttribute('data-loaded', 'true'));
           }
         }
 
