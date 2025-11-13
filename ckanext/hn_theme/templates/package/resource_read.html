@@ -107,7 +107,7 @@
                href="{{ h.url_for('dataset_resource.read', id=package.name, resource_id=res.id) }}#preview"
                target="_self">
                 <i class="fa fa-eye"></i>
-                {{ _('Ver vista previa (primeras 5 filas)') }}
+                {{ fetch('/api/3/action/datastore_search?resource_id={{ res.id }}&limit=5') }}
             </a>
         </div>
         {% endif %}
