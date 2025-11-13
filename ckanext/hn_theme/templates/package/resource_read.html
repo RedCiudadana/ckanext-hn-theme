@@ -60,6 +60,47 @@
             {% endblock %}
         </div>
 
+
+
+        {% block resource_content %}
+        <h1 class="page-heading mb-3">{{ h.resource_display_name(res) | truncate(60) }}</h1>
+
+        {% if res.description %}
+        <div class="prose notes mb-4">{{ h.render_markdown(res.description) }}</div>
+        {% endif %}
+
+        {% if not res.description and package.notes %}
+        <div class="prose notes mb-4">
+            <h3 class="h5 text-muted mb-2">{{ _('Descripción del conjunto de datos:') }}</h3>
+            <blockquote class="blockquote">{{ h.markdown_extract(h.get_translated(package, 'notes')) }}</blockquote>
+            <p class="text-muted small">
+                {% trans dataset=h.get_translated(package, 'title'), url=h.url_for(package.type ~ '.read', id=package.name) %}
+                Fuente: <a href="{{ url }}">{{ dataset }}</a>
+                {% endtrans %}
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- URL del recurso -->
+        {% if res.url and h.is_url(res.url) %}
+        <div class="card bg-light mb-4">
+            <div class="card-body p-3">
+                <h5 class="card-title mb-1"><i class="fa fa-link text-muted me-2"></i>{{ _('URL del recurso') }}</h5>
+                <p class="card-text mb-0 text-break">
+                    <a href="{{ res.url }}" class="resource-url-analytics text-decoration-none" target="_blank">
+                        <i class="fa fa-external-link me-1 text-muted"></i>{{ res.url | truncate(80) }}
+                    </a>
+                </p>
+            </div>
+        </div>
+        {% elif res.url %}
+        <div class="card bg-light mb-4">
+            <div class="card-body p-3">
+                <h5 class="card-title mb-1"><i class="fa fa-file text-muted me-2"></i>{{ _('Ruta del archivo') }}</h5>
+                <p class="card-text mb-0"><code>{{ res.url }}</code></p>
+            </div>
+        </div>
+        {% endif %}
         <!-- ✅ PREVISUALIZACIÓN AUTOMÁTICA (solo CSV pequeños) -->
         {% if res.format and res.format.lower() == 'csv' and res.size and res.size < 5242880 and res.url and h.is_url(res.url) %}
         <div class="card mb-4">
@@ -103,46 +144,6 @@
             });
         })();
         </script>
-        {% endif %}
-
-        {% block resource_content %}
-        <h1 class="page-heading mb-3">{{ h.resource_display_name(res) | truncate(60) }}</h1>
-
-        {% if res.description %}
-        <div class="prose notes mb-4">{{ h.render_markdown(res.description) }}</div>
-        {% endif %}
-
-        {% if not res.description and package.notes %}
-        <div class="prose notes mb-4">
-            <h3 class="h5 text-muted mb-2">{{ _('Descripción del conjunto de datos:') }}</h3>
-            <blockquote class="blockquote">{{ h.markdown_extract(h.get_translated(package, 'notes')) }}</blockquote>
-            <p class="text-muted small">
-                {% trans dataset=h.get_translated(package, 'title'), url=h.url_for(package.type ~ '.read', id=package.name) %}
-                Fuente: <a href="{{ url }}">{{ dataset }}</a>
-                {% endtrans %}
-            </p>
-        </div>
-        {% endif %}
-
-        <!-- URL del recurso -->
-        {% if res.url and h.is_url(res.url) %}
-        <div class="card bg-light mb-4">
-            <div class="card-body p-3">
-                <h5 class="card-title mb-1"><i class="fa fa-link text-muted me-2"></i>{{ _('URL del recurso') }}</h5>
-                <p class="card-text mb-0 text-break">
-                    <a href="{{ res.url }}" class="resource-url-analytics text-decoration-none" target="_blank">
-                        <i class="fa fa-external-link me-1 text-muted"></i>{{ res.url | truncate(80) }}
-                    </a>
-                </p>
-            </div>
-        </div>
-        {% elif res.url %}
-        <div class="card bg-light mb-4">
-            <div class="card-body p-3">
-                <h5 class="card-title mb-1"><i class="fa fa-file text-muted me-2"></i>{{ _('Ruta del archivo') }}</h5>
-                <p class="card-text mb-0"><code>{{ res.url }}</code></p>
-            </div>
-        </div>
         {% endif %}
         {% endblock %}
 
