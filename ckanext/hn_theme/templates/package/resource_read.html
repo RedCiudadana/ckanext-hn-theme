@@ -101,75 +101,15 @@
             </div>
         </div>
         {% endif %}
-        <!-- ✅ VISTA PREVIA COLAPSABLE (solo CSV pequeños) -->
-        {% if res.format and res.format.lower() == 'csv' and res.size and res.size < 5242880 and res.url and h.is_url(res.url) %}
+        {% if res.format and res.format.lower() == 'csv' and res.size and res.size < 5242880 and res.url %}
         <div class="mb-4">
-            <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#preview-collapse-{{ res.id }}"
-                    aria-expanded="false"
-                    aria-controls="preview-collapse-{{ res.id }}"
-                    onclick="loadPreviewOnce(this, '{{ res.url | escapejs }}', '{{ res.id }}')">
+            <a class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+               href="{{ h.url_for('dataset_resource.read', id=package.name, resource_id=res.id) }}#preview"
+               target="_self">
                 <i class="fa fa-eye"></i>
-                <span>{{ _('Ver vista previa (primeras 5 filas)') }}</span>
-                <i class="fa fa-chevron-right ms-auto chevron-toggle"></i>
-            </button>
-
-            <div class="collapse mt-3" id="preview-collapse-{{ res.id }}">
-                <div class="card">
-                    <div class="card-header bg-light small">
-                        <i class="fa fa-table me-1"></i> {{ _('Datos de ejemplo') }}
-                    </div>
-                    <div class="card-body p-0">
-                        <div id="preview-content-{{ res.id }}" class="p-3" style="min-height: 60px;">
-                            <p class="text-center text-muted py-2">
-                                <i class="fa fa-spinner fa-spin me-1"></i> {{ _('Cargando...') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                {{ _('Ver vista previa (primeras 5 filas)') }}
+            </a>
         </div>
-
-        <script>
-        function loadPreviewOnce(btn, url, resId) {
-          const collapse = document.getElementById('preview-collapse-' + resId);
-          const content = document.getElementById('preview-content-' + resId);
-          const chevron = btn.querySelector('.chevron-toggle');
-
-          // Solo cargar la primera vez que se expande
-          if (!collapse.hasAttribute('data-loaded')) {
-            fetch(url)
-              .then(r => r.ok ? r.text() : Promise.reject('HTTP ' + r.status))
-              .then(text => {
-                const lines = text.split('\n').filter(l => l.trim());
-                if (lines.length < 2) throw 'no data';
-                const headers = lines[0].split(',').map(h => h.trim());
-                const rows = lines.slice(1, 6).map(line => line.split(',').map(cell => cell.trim()));
-
-                let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
-                headers.forEach(h => html += `<th scope="col">${h || '&nbsp;'}</th>`);
-                html += '</tr></thead><tbody>';
-                rows.forEach(row => {
-                  html += '<tr>' + headers.map((_, i) => `<td>${(row[i] || '').replace(/</g, '<').replace(/>/g, '>')}</td>`).join('') + '</tr>';
-                });
-                html += '</tbody></table></div>';
-                content.innerHTML = html;
-              })
-              .catch(() => {
-                content.innerHTML = `<p class="text-center text-muted py-2"><i class="fa fa-exclamation-triangle me-1"></i> {{ _('No se pudo cargar la vista previa') }}</p>`;
-              })
-              .finally(() => {
-                collapse.setAttribute('data-loaded', 'true');
-              });
-          }
-
-          // Rotar ícono
-          chevron.classList.toggle('fa-chevron-right');
-          chevron.classList.toggle('fa-chevron-down');
-        }
-        </script>
         {% endif %}
         {% endblock %}
 
