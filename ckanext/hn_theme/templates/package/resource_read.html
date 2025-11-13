@@ -102,8 +102,7 @@
         </div>
         {% endif %}
 
-
-        <!-- ✅ VISTA PREVIA (solo para recursos subidos internamente) -->
+   
         {% if res.format and res.format.lower() in ['csv', 'txt'] and res.size and res.size < 5242880 and res.url_type == 'upload' and res.id %}
         <div class="mb-4">
             <button class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-between w-100"
@@ -186,8 +185,7 @@
         }
         </script>
         {% endif %}
-
-        <!-- ✅ Mensaje para recursos EXTERNOS (sin preview automática) -->
+        
         {% if res.url and res.url_type != 'upload' and res.format and res.format.lower() in ['csv', 'json'] %}
         <div class="alert alert-info small mb-4">
             <i class="fa fa-link me-1"></i>
@@ -198,7 +196,7 @@
                     <i class="fa fa-external-link me-1"></i> {{ _('Abrir enlace externo') }}
                 </a>
                 {% if res.format.lower() == 'csv' %}
-                <a href="https://docs.google.com/spreadsheets/d/import?url={{ res.url | urlencode }}&output=csv"
+                <a href="https://docs.google.com/gview?url={{ res.url | urlencode }}&output=csv"
                    target="_blank" class="btn btn-sm btn-outline-success ms-1">
                     <i class="fab fa-google me-1"></i> {{ _('Abrir en Google Sheets') }}
                 </a>
