@@ -101,158 +101,61 @@
             </div>
         </div>
         {% endif %}
-        <!-- ✅ VISTA PREVIA INTELIGENTE (CSV + JSON) -->
-        {% if res.format and res.id and res.size and res.size < 5242880 %}
-        {% set format_lower = res.format.lower() %}
-        {% if format_lower in ['csv', 'txt', 'json'] %}
+        <!-- ✅ Vista previa: CSV -->
+        {% if res.format and res.format.lower() in ['csv', 'txt', 'xlsx', 'xls'] and res.size and res.size < 5242880 and res.id %}
         <div class="mb-4">
             <button class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-between w-100"
                     type="button"
                     data-bs-toggle="collapse"
-                    data-bs-target="#smart-preview-{{ res.id }}"
+                    data-bs-target="#preview-csv-{{ res.id }}"
                     aria-expanded="false"
-                    aria-controls="smart-preview-{{ res.id }}"
-                    onclick="initSmartPreview(this, '{{ res.id }}', {{ 'true' if res.datastore_active else 'false' }}, '{{ format_lower }}')">
-                <span>
-                    <i class="fa fa-eye me-2"></i>
-                    {{ _('Ver vista previa (primeras 5 filas / primer nivel)') }}
-                </span>
-                <i class="fa fa-chevron-right chevron-toggle"></i>
+                    aria-controls="preview-csv-{{ res.id }}">
+                <span><i class="fa fa-table me-2"></i> {{ _('Vista previa de tabla (CSV/Excel)') }}</span>
+                <i class="fa fa-chevron-right"></i>
             </button>
-
-            <div class="collapse mt-3" id="smart-preview-{{ res.id }}">
+            <div class="collapse mt-3" id="preview-csv-{{ res.id }}">
                 <div class="card">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center small">
-                        <span>
-                            {% if format_lower == 'json' %}
-                            <i class="fa fa-code me-1"></i> {{ _('Estructura JSON') }}
-                            {% else %}
-                            <i class="fa fa-table me-1"></i> {{ _('Datos de ejemplo') }}
-                            {% endif %}
-                        </span>
-                        <span class="badge bg-secondary">{{ res.format.upper() }}</span>
+                    <div class="card-header bg-light small">
+                        <i class="fa fa-file-csv me-1"></i> {{ _('Primeras 5 filas') }}
                     </div>
-                    <div class="card-body p-0">
-                        <div id="smart-preview-content-{{ res.id }}" class="p-3" style="min-height: 60px;">
-                            <p class="text-center text-muted py-2">
-                                <i class="fa fa-spinner fa-spin me-1"></i> {{ _('Cargando...') }}
-                            </p>
+                    <div class="card-body p-3">
+                        <div class="text-center py-2" id="csv-preview-{{ res.id }}">
+                            <button class="btn btn-sm btn-primary" onclick="loadCsvPreview('{{ res.id }}', '{{ package.name }}', '{{ res.name | replace(' ', '%20') if res.name else 'recurso.csv' }}')">
+                                <i class="fa fa-play me-1"></i> {{ _('Cargar vista previa') }}
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <script>
-        function initSmartPreview(btn, resourceId, datastoreActive, format) {
-          const collapse = document.getElementById('smart-preview-' + resourceId);
-          const content = document.getElementById('smart-preview-content-' + resourceId);
-          const chevron = btn.querySelector('.chevron-toggle');
-
-          chevron.classList.toggle('fa-chevron-right');
-          chevron.classList.toggle('fa-chevron-down');
-
-          if (collapse.hasAttribute('data-loaded')) return;
-
-          const downloadUrl = '/dataset/{{ package.name }}/resource/' + resourceId + '/download/{{ res.name | replace(" ", "%20") if res.name else (format == "json" ? "recurso.json" : "recurso.csv") }}';
-
-          if (datastoreActive && format !== 'json') {
-            // DataStore solo sirve para tablas (CSV), no para JSON estructurado
-            fetch('/api/3/action/datastore_search?resource_id=' + resourceId + '&limit=5')
-              .then(r => r.json())
-              .then(data => {
-                if (data.success && data.result && data.result.records) {
-                  renderTable(content, data.result.fields, data.result.records);
-                } else {
-                  renderFallback(content, resourceId, format);
-                }
-              })
-              .catch(() => renderFallback(content, resourceId, format))
-              .finally(() => collapse.setAttribute('data-loaded', 'true'));
-          } else {
-            // CSV o JSON: descargar y procesar en cliente
-            fetch(downloadUrl)
-              .then(r => {
-                if (!r.ok) throw new Error('HTTP ' + r.status);
-                return format === 'json' ? r.json() : r.text();
-              })
-              .then(data => {
-                if (format === 'json') {
-                  renderJSON(content, data);
-                } else {
-                  const lines = (data + '').split('\n').filter(l => l.trim());
-                  if (lines.length < 1) throw new Error('empty');
-                  const headers = lines[0].split(',').map(h => h.trim());
-                  const rows = lines.slice(1, 6).map(line => line.split(',').map(cell => cell.trim()));
-                  renderTable(content, headers, rows);
-                }
-              })
-              .catch(err => {
-                console.warn('Preview failed for', format, ':', err);
-                renderFallback(content, resourceId, format);
-              })
-              .finally(() => collapse.setAttribute('data-loaded', 'true'));
-          }
-        }
-
-        function renderTable(container, headers, rows) {
-          let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
-          headers.forEach(h => html += `<th scope="col">${h || '&nbsp;'}</th>`);
-          html += '</tr></thead><tbody>';
-          rows.forEach(row => {
-            html += '<tr>';
-            for (let i = 0; i < headers.length; i++) {
-              const cell = row[i] || '';
-              const safeCell = cell.replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>');
-              html += `<td>${safeCell}</td>`;
-            }
-            html += '</tr>';
-          });
-          html += '</tbody></table></div>';
-          container.innerHTML = html;
-        }
-
-        function renderJSON(container, obj) {
-          // Mostrar solo primer nivel de profundidad (seguro y rápido)
-          const keys = Object.keys(obj).slice(0, 10); // Máx 10 claves
-          let html = '<pre class="mb-0" style="font-size:0.85rem; line-height:1.4"><code>';
-          keys.forEach(key => {
-            const value = obj[key];
-            const type = Array.isArray(value) ? 'array' : typeof value;
-            const displayValue = type === 'string'
-              ? `"${value.substring(0, 50)}${value.length > 50 ? '…' : ''}"`
-              : type === 'object' ? '{…}'
-              : Array.isArray(value) ? `[${value.length} item${value.length !== 1 ? 's' : ''}]`
-              : value;
-            html += `<span class="text-success">"${key}"</span>: <span class="${type === 'string' ? 'text-warning' : type === 'number' ? 'text-primary' : 'text-muted'}">${displayValue}</span>,\n`;
-          });
-          if (Object.keys(obj).length > 10) {
-            html += `… <span class="text-muted">// +${Object.keys(obj).length - 10} claves</span>\n`;
-          }
-          html += '</code></pre>';
-          container.innerHTML = html;
-        }
-
-        function renderFallback(container, resourceId, format) {
-          const message = format === 'json'
-            ? '{{ _("No se pudo cargar la estructura JSON") }}'
-            : '{{ _("No se pudo cargar la vista previa") }}';
-          container.innerHTML = `
-            <div class="p-3 text-center">
-              <p class="mb-2"><i class="fa fa-exclamation-triangle text-warning me-1"></i> ${message}</p>
-              <p class="small text-muted mb-2">
-                {{ _('Este recurso aún no ha sido procesado para vistas interactivas.') }}
-              </p>
-              {% if h.check_access('resource_view_create', {'resource_id': res.id}) %}
-              <a href="{{ h.url_for(pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id) }}"
-                 class="btn btn-sm btn-outline-primary">
-                <i class="fa fa-cogs me-1"></i> {{ _('Procesar ahora') }}
-              </a>
-              {% endif %}
-            </div>`;
-        }
-        </script>
         {% endif %}
+        <!-- ✅ Vista previa: JSON -->
+        {% if res.format and res.format.lower() == 'json' and res.size and res.size < 2097152 and res.id %}
+        <div class="mb-4">
+            <button class="btn btn-outline-success btn-sm d-flex align-items-center justify-content-between w-100"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#preview-json-{{ res.id }}"
+                    aria-expanded="false"
+                    aria-controls="preview-json-{{ res.id }}">
+                <span><i class="fa fa-code me-2"></i> {{ _('Vista previa de estructura (JSON)') }}</span>
+                <i class="fa fa-chevron-right"></i>
+            </button>
+            <div class="collapse mt-3" id="preview-json-{{ res.id }}">
+                <div class="card">
+                    <div class="card-header bg-light small">
+                        <i class="fa fa-brackets-curly me-1"></i> {{ _('Primer nivel de claves') }}
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="text-center py-2" id="json-preview-{{ res.id }}">
+                            <button class="btn btn-sm btn-success" onclick="loadJsonPreview('{{ res.id }}', '{{ package.name }}', '{{ res.name | replace(' ', '%20') if res.name else 'recurso.json' }}')">
+                                <i class="fa fa-play me-1"></i> {{ _('Cargar estructura') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endif %}
         {% endblock %}
 
