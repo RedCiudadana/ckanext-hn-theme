@@ -101,16 +101,18 @@
             </div>
         </div>
         {% endif %}
-        <!-- ✅ VISTA PREVIA INTELIGENTE (con Data API y fallback) -->
-        {% if res.format and res.format.lower() in ['csv', 'txt'] and res.id and res.size and res.size < 5242880 %}
+
+
+        <!-- ✅ VISTA PREVIA (solo para recursos subidos internamente) -->
+        {% if res.format and res.format.lower() in ['csv', 'txt'] and res.size and res.size < 5242880 and res.url_type == 'upload' and res.id %}
         <div class="mb-4">
             <button class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-between w-100"
                     type="button"
                     data-bs-toggle="collapse"
-                    data-bs-target="#smart-preview-{{ res.id }}"
+                    data-bs-target="#preview-{{ res.id }}"
                     aria-expanded="false"
-                    aria-controls="smart-preview-{{ res.id }}"
-                    onclick="initSmartPreview(this, '{{ res.id }}', {{ 'true' if res.datastore_active else 'false' }})">
+                    aria-controls="preview-{{ res.id }}"
+                    onclick="loadPreviewOnce(this, '{{ res.id }}', '{{ package.name }}', '{{ res.name | replace(' ', '%20') if res.name else 'recurso.csv' }}')">
                 <span>
                     <i class="fa fa-eye me-2"></i>
                     {{ _('Ver vista previa (primeras 5 filas)') }}
@@ -118,17 +120,14 @@
                 <i class="fa fa-chevron-right chevron-toggle"></i>
             </button>
 
-            <div class="collapse mt-3" id="smart-preview-{{ res.id }}">
+            <div class="collapse mt-3" id="preview-{{ res.id }}">
                 <div class="card">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center small">
-                        <span><i class="fa fa-table me-1"></i> {{ _('Datos de ejemplo') }}</span>
-                        <span class="badge bg-secondary">{{ res.format.upper() }}</span>
+                    <div class="card-header bg-light small">
+                        <i class="fa fa-table me-1"></i> {{ _('Datos de ejemplo') }}
                     </div>
-                    <div class="card-body p-0">
-                        <div id="smart-preview-content-{{ res.id }}" class="p-3" style="min-height: 60px;">
-                            <p class="text-center text-muted py-2">
-                                <i class="fa fa-spinner fa-spin me-1"></i> {{ _('Cargando...') }}
-                            </p>
+                    <div class="card-body p-3">
+                        <div id="preview-content-{{ res.id }}" class="text-center py-2">
+                            <i class="fa fa-spinner fa-spin me-1"></i> {{ _('Cargando...') }}
                         </div>
                     </div>
                 </div>
@@ -136,101 +135,79 @@
         </div>
 
         <script>
-        function initSmartPreview(btn, resourceId, datastoreActive) {
-          const collapse = document.getElementById('smart-preview-' + resourceId);
-          const content = document.getElementById('smart-preview-content-' + resourceId);
+        function loadPreviewOnce(btn, resourceId, pkgName, fileName) {
+          const collapse = document.getElementById('preview-' + resourceId);
+          const content = document.getElementById('preview-content-' + resourceId);
           const chevron = btn.querySelector('.chevron-toggle');
 
-          // Rotar ícono inmediatamente
           chevron.classList.toggle('fa-chevron-right');
           chevron.classList.toggle('fa-chevron-down');
 
-          // Solo cargar la primera vez
           if (collapse.hasAttribute('data-loaded')) return;
 
-          if (datastoreActive) {
-            // ✅ Opción 1: DataStore (rápido y oficial)
-            fetch('/api/3/action/datastore_search?resource_id=' + resourceId + '&limit=5')
-              .then(r => r.json())
-              .then(data => {
-                if (data.success && data.result.records) {
-                  renderTable(content, data.result.fields, data.result.records);
-                } else {
-                  content.innerHTML = `<p class="text-center text-muted py-2">{{ _('Vista previa no disponible') }}</p>`;
+          const url = `/dataset/${pkgName}/resource/${resourceId}/download/${fileName}`;
+
+          fetch(url)
+            .then(r => {
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              return r.text();
+            })
+            .then(text => {
+              const lines = text.split('\n').filter(l => l.trim());
+              if (lines.length < 1) throw new Error('empty');
+              const headers = lines[0].split(',').map(h => h.trim());
+              const rows = lines.slice(1, 6).map(line =>
+                line.split(',').map(cell => cell.trim().replace(/^"(.*)"$/, '$1'))
+              );
+
+              let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
+              headers.forEach(h => html += `<th scope="col">${h || '&nbsp;'}</th>`);
+              html += '</tr></thead><tbody>';
+              rows.forEach(row => {
+                html += '<tr>';
+                for (let i = 0; i < headers.length; i++) {
+                  const v = row[i] || '';
+                  const safe = v.replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>');
+                  html += `<td>${safe}</td>`;
                 }
-              })
-              .catch(() => {
-                content.innerHTML = `<p class="text-center text-muted py-2">{{ _('Error al cargar desde DataStore') }}</p>`;
-              })
-              .finally(() => collapse.setAttribute('data-loaded', 'true'));
-          } else {
-              // ✅ Opción 2a: Si es URL externa → usar proxy de CKAN
-              const isExternal = !('{{ res.url_type }}' === 'upload');
-              const proxyUrl = isExternal
-                  ? '/api/3/action/resource_proxy?url=' + encodeURIComponent('{{ res.url | replace("\\", "\\\\") }}')
-                  : '/dataset/{{ package.name }}/resource/' + resourceId + '/download/{{ res.name | replace(" ", "%20") if res.name else "recurso.csv" }}';
-
-              fetch(proxyUrl)
-                  .then(r => {
-                      if (!r.ok) throw new Error('HTTP ' + r.status);
-                      return r.text();
-                  })
-                  .then(text => {
-                      // Truncar para evitar sobrecarga (solo primeros 50 KB)
-                      if (text.length > 50000) {
-                          // Buscar el final de la quinta línea (o truncar con \n)
-                          const lines = text.split('\n');
-                          text = lines.slice(0, 6).join('\n');
-                      }
-                      const lines = text.split('\n').filter(l => l.trim());
-                      if (lines.length < 1) throw new Error('empty');
-                      const headers = lines[0].split(',').map(h => h.trim());
-                      const rows = lines.slice(1, 6).map(line => line.split(',').map(cell => cell.trim()));
-                      renderTable(content, headers, rows);
-                  })
-                  .catch(err => {
-                      console.warn('Preview failed:', err);
-                      content.innerHTML = `
-        <div class="p-3 text-center">
-          <p class="mb-2"><i class="fa fa-exclamation-triangle text-warning me-1"></i> {{ _('No se pudo cargar la vista previa') }}</p>
-          <p class="small text-muted mb-2">
-            {% if '{{ res.url_type }}' == 'upload' %}
-              {{ _('El recurso no está accesible o es demasiado grande.') }}
-            {% else %}
-              {{ _('No se pudo acceder al recurso externo. Puede estar caído o bloqueado.') }}
-            {% endif %}
-          </p>
-          {% if h.check_access('resource_view_create', {'resource_id': res.id}) %}
-          <a href="{{ h.url_for(pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id) }}"
-             class="btn btn-sm btn-outline-primary">
-            <i class="fa fa-cogs me-1"></i> {{ _('Procesar ahora') }}
-          </a>
-          {% endif %}
-        </div>`;
-                  })
-                  .finally(() => collapse.setAttribute('data-loaded', 'true'));
-          }
-        }
-
-        function renderTable(container, headers, rows) {
-          let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
-          headers.forEach(h => html += `<th scope="col">${h || '&nbsp;'}</th>`);
-          html += '</tr></thead><tbody>';
-          rows.forEach(row => {
-            html += '<tr>';
-            for (let i = 0; i < headers.length; i++) {
-              const cell = row[i] || '';
-              // Escapar HTML para seguridad
-              const safeCell = cell.replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>');
-              html += `<td>${safeCell}</td>`;
-            }
-            html += '</tr>';
-          });
-          html += '</tbody></table></div>';
-          container.innerHTML = html;
+                html += '</tr>';
+              });
+              html += '</tbody></table></div>';
+              content.innerHTML = html;
+            })
+            .catch(err => {
+              content.innerHTML = `
+                <p class="text-center text-muted">
+                  <i class="fa fa-exclamation-triangle text-warning me-1"></i>
+                  {{ _('Vista previa no disponible') }}
+                </p>`;
+            })
+            .finally(() => collapse.setAttribute('data-loaded', 'true'));
         }
         </script>
         {% endif %}
+
+        <!-- ✅ Mensaje para recursos EXTERNOS (sin preview automática) -->
+        {% if res.url and res.url_type != 'upload' and res.format and res.format.lower() in ['csv', 'json'] %}
+        <div class="alert alert-info small mb-4">
+            <i class="fa fa-link me-1"></i>
+            <strong>{{ _('Recurso externo') }}:</strong>
+            {{ _('Este archivo está alojado en un sitio externo y no se puede previsualizar automáticamente.') }}
+            <div class="mt-2">
+                <a href="{{ res.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="fa fa-external-link me-1"></i> {{ _('Abrir enlace externo') }}
+                </a>
+                {% if res.format.lower() == 'csv' %}
+                <a href="https://docs.google.com/spreadsheets/d/import?url={{ res.url | urlencode }}&output=csv"
+                   target="_blank" class="btn btn-sm btn-outline-success ms-1">
+                    <i class="fab fa-google me-1"></i> {{ _('Abrir en Google Sheets') }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+
         {% endblock %}
 
         {% block data_preview %}
