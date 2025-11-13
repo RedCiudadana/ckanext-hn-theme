@@ -54,6 +54,50 @@
                     </div>
                 </li>
                 {% endif %}
+                <!-- ✅ PREVISUALIZACIÓN AUTOMÁTICA (solo CSV pequeños) -->
+                {% if res.format and res.format.lower() == 'csv' and res.size and res.size < 5242880 and res.url and h.is_url(res.url) %}
+                <div class="card mb-4">
+                    <div class="card-header bg-light d-flex align-items-center">
+                        <i class="fa fa-table text-primary me-2"></i>
+                        <h5 class="mb-0">{{ _('Vista previa rápida') }}</h5>
+                        <small class="ms-2 text-muted">({{ _('primeras 5 filas') }})</small>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="preview-{{ res.id }}" class="p-3" style="min-height: 120px;">
+                            <p class="text-center text-muted py-2">
+                                <i class="fa fa-spinner fa-spin me-1"></i> {{ _('Cargando datos...') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+        (function() {
+          const el = document.getElementById('preview-{{ res.id }}');
+          if (!el) return;
+          fetch('{{ res.url }}')
+            .then(r => r.ok ? r.text() : Promise.reject('HTTP ' + r.status))
+            .then(text => {
+              const lines = text.split('\n').filter(l => l.trim());
+              if (lines.length < 2) throw 'empty';
+              const headers = lines[0].split(',').map(h => h.trim());
+              const rows = lines.slice(1, 6).map(line => line.split(',').map(cell => cell.trim()));
+
+              let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
+              headers.forEach(h => html += `<th>${h || '&nbsp;'}</th>`);
+              html += '</tr></thead><tbody>';
+              rows.forEach(row => {
+                html += '<tr>' + headers.map((_, i) => `<td>${row[i] || ''}</td>`).join('') + '</tr>';
+              });
+              html += '</tbody></table></div>';
+              el.innerHTML = html;
+            })
+            .catch(() => {
+              el.innerHTML = `<p class="text-center text-muted py-2"><i class="fa fa-file me-1"></i> {{ _('Vista previa no disponible') }}</p>`;
+            });
+        })();
+                </script>
+                {% endif %}
                 {% endblock %}
             </ul>
             {% endblock %}
