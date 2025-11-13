@@ -1,195 +1,252 @@
 {% extends "package/base.html" %}
 
 {% set res = resource %}
+{% set pkg = package %}
+{% set is_csv_like = res.format and res.format.lower() in ['csv', 'txt', 'xlsx', 'xls'] %}
+{% set can_create_view = h.check_access('resource_view_create', {'resource_id': res.id}) %}
+{% set file_size_mb = (res.size | int / 1048576) | round(1) if res.size else 0 %}
 
 {% block head_extras -%}
 {{ super() }}
-  {% set description = h.markdown_extract(h.get_translated(res, 'description'), extract_length=200) if res.description else h.markdown_extract(h.get_translated(package, 'notes'), extract_length=200) %}
-<meta property="og:title" content="{{ h.dataset_display_name(package) }} - {{ h.resource_display_name(res) }} - {{ g.site_title }}">
+{% set description = h.markdown_extract(h.get_translated(res, 'description'), extract_length=200) if res.description else h.markdown_extract(h.get_translated(pkg, 'notes'), extract_length=200) %}
+<meta property="og:title" content="{{ h.dataset_display_name(pkg) }} - {{ h.resource_display_name(res) }} - {{ g.site_title }}">
 <meta property="og:description" content="{{ description|forceescape }}">
-{% endblock -%}
+{% if is_csv_like and res.size and file_size_mb < 5 %}
+  {# Precarga ligera para preview #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const previewEl = document.getElementById('quick-preview-{{ res.id }}');
+      if (!previewEl) return;
+      fetch('{{ res.url }}')
+        .then(r => r.ok ? r.text() : Promise.reject('HTTP ' + r.status))
+        .then(text => {
+          const lines = text.split('\n').filter(l => l.trim());
+          if (lines.length < 2) throw 'Empty or header-only';
+          const headers = lines[0].split(',').map(h => h.trim());
+          const rows = lines.slice(1, 6).map(line => line.split(',').map(cell => cell.trim()));
 
-{% block subtitle %}{{ h.dataset_display_name(package) }} {{ g.template_title_delimiter }} {{ h.resource_display_name(res) }}{% endblock %}
+          let html = '<div class="table-responsive"><table class="table table-sm table-bordered mb-0"><thead><tr>';
+          headers.forEach(h => html += `<th scope="col">${h || '&nbsp;'}</th>`);
+          html += '</tr></thead><tbody>';
 
-{% block breadcrumb_content_selected %}{% endblock %}
+          rows.forEach(row => {
+            html += '<tr>';
+            for (let i = 0; i < headers.length; i++) {
+              html += `<td>${(row[i] || '&nbsp;').replace(/</g, '<').replace(/>/g, '>')}</td>`;
+            }
+            html += '</tr>';
+          });
+          html += '</tbody></table></div>';
+
+          previewEl.innerHTML = html;
+        })
+        .catch(err => {
+          previewEl.innerHTML = `<p class="text-center text-muted py-3"><i class="fas fa-file-alt me-1"></i> Vista previa no disponible para este archivo.</p>`;
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}
+
+{% block subtitle %}{{ h.dataset_display_name(pkg) }} {{ g.template_title_delimiter }} {{ h.resource_display_name(res) }}{% endblock %}
 
 {% block breadcrumb_content %}
 {{ super() }}
-<li class="active"><a href="" aria-current="page" aria-label="{{ _('Current resource: {name}').format(name=h.resource_display_name(res)) }}">{{ h.resource_display_name(res)|truncate(30) }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">
+    <span aria-label="{{ _('Current resource: {name}').format(name=h.resource_display_name(res)) }}">
+        {{ h.resource_display_name(res)|truncate(30) }}
+    </span>
+</li>
 {% endblock %}
 
 {% block pre_primary %}
-  {% block resource %}
 <section class="module module-resource" role="complementary">
-    {% block resource_inner %}
     <div class="module-content">
-        <div class="actions">
-            {% block resource_actions %}
-            <ul class="d-flex flex-wrap gap-1 justify-content-end">
-                {% block resource_actions_inner %}
-                {% block action_manage %}
-                {% if h.check_access('package_update', {'id':pkg.id }) %}
-                <li>{% link_for _('Edit resource'), named_route=pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id, class_='btn btn-secondary', icon='pencil' %}</li>
-                {% block action_manage_inner %}{% endblock %}
-                <li>{% link_for _('Views'), named_route=pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id, class_='btn btn-secondary', icon='chart-bar' %}</li>
+        <!-- Acciones superiores -->
+        <div class="d-flex flex-wrap gap-2 mb-4 justify-content-between align-items-start">
+            <div>
+                <h1 class="page-heading mb-1">{{ h.resource_display_name(res) | truncate(60) }}</h1>
+                {% if res.description %}
+                <div class="prose notes text-muted">{{ h.render_markdown(res.description) }}</div>
                 {% endif %}
-                {% endblock action_manage %}
-                {% if res.url and h.is_url(res.url) %}
-                <li>
-                    <div class="btn-group">
-                        <a class="btn btn-primary resource-url-analytics" href="{{ res.url }}">
-                            {% if res.resource_type in ('listing', 'service') %}
-                            <i class="fa fa-eye"></i> {{ _('View') }}
-                            {% elif  res.resource_type == 'api' %}
-                            <i class="fa fa-key"></i> {{ _('API Endpoint') }}
-                            {% elif not res.has_views and not res.url_type == 'upload' %}
-                            <i class="fa fa-external-link"></i> {{ _('Go to resource') }}
-                            {% else %}
-                            <i class="fa fa-arrow-circle-down"></i> {{ _('Download') }}
+            </div>
+            <div>
+                <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+                    {% if h.check_access('package_update', {'id': pkg.id}) %}
+                    <li>{% link_for _('Edit resource'), named_route=pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id, class_='btn btn-outline-secondary btn-sm', icon='pencil' %}</li>
+                    <li>{% link_for _('Manage views'), named_route=pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id, class_='btn btn-outline-secondary btn-sm', icon='chart-bar' %}</li>
+                    {% endif %}
+                    {% if res.url and h.is_url(res.url) %}
+                    <li>
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-success btn-sm resource-url-analytics d-flex align-items-center gap-1"
+                               href="{{ res.url }}"
+                               download="{{ res.name or 'recurso.csv' }}"
+                               title="{{ _('Download: {size}').format(size=h.humanize_filesize(res.size) or 'unknown size') }}">
+                                <i class="fa fa-download"></i>
+                                <span>{{ _('Download') }}</span>
+                                {% if res.size %}<small class="ms-1">({{ h.humanize_filesize(res.size) }})</small>{% endif %}
+                            </a>
+                            {% if is_csv_like %}
+                            <a class="btn btn-outline-success btn-sm"
+                               href="https://docs.google.com/spreadsheets/d/import?url={{ res.url | urlencode }}&output=csv"
+                               target="_blank"
+                               title="{{ _('Open in Google Sheets') }}">
+                                <i class="fab fa-google"></i>
+                            </a>
                             {% endif %}
-                        </a>
-                        {% block download_resource_button %}{% endblock download_resource_button %}
-                    </div>
-                </li>
-                {% endif %}
-                {% endblock %}
-            </ul>
-            {% endblock %}
+                        </div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-        {% block resource_content %}
-        {% block resource_read_title %}<h1 class="page-heading">{{ h.resource_display_name(res) | truncate(50) }}</h1>{% endblock %}
-        {% block resource_read_url %}
-        {% if res.url and h.is_url(res.url) %}
-        <p class="text-muted ellipsis">{{ _('URL:') }} <a class="resource-url-analytics" href="{{ res.url }}" aria-label="{{ _('Resource URL: {url}').format(url=res.url) }}">{{ res.url }}</a></p>
-        {% elif res.url %}
-        <p class="text-muted break-word">{{ _('URL:') }} {{ res.url }}</p>
+
+        <!-- Vista previa inteligente -->
+        {% if is_csv_like and res.size and file_size_mb < 5 %}
+        <div class="alert alert-light border mb-4" style="background-color: #f9f9fa;">
+            <h3 class="h5 mb-3">
+                <i class="fas fa-eye text-primary me-2"></i>
+                {{ _('Quick preview (first 5 rows)') }}
+                <small class="text-muted ms-2">{{ h.humanize_filesize(res.size) }}</small>
+            </h3>
+            <div id="quick-preview-{{ res.id }}" class="bg-white p-3 border rounded">
+                <p class="text-center text-muted py-3">
+                    <i class="fas fa-spinner fa-spin me-2"></i> {{ _('Loading data...') }}
+                </p>
+            </div>
+            <small class="text-muted d-block mt-2">
+                <i class="fas fa-info-circle me-1"></i> {{ _('Preview is generated directly from the file — no processing required.') }}
+            </small>
+        </div>
         {% endif %}
-        {% endblock %}
-        <div class="prose notes" property="rdfs:label">
-            {% if res.description %}
-            {{ h.render_markdown(res.description) }}
-            {% endif %}
-            {% if not res.description and package.notes %}
-            <h3>{{ _('Dataset description:') }}</h3>
-            <blockquote>{{ h.markdown_extract(h.get_translated(package, 'notes')) }}</blockquote>
-            <p>{% trans dataset=h.get_translated(package, 'title'), url=h.url_for(package.type ~ '.read', id=package.name) %}Source: <a href="{{ url }}">{{ dataset }}</a>{% endtrans %}<p>
+
+        <!-- Estado y acciones -->
+        <div class="alert alert-{% if can_create_view %}warning{% else %}info{% endif %} d-flex align-items-start mb-4">
+            <i class="fas fa-{% if can_create_view %}cogs{% else %}chart-line{% endif %} fa-2x me-3 mt-1 text-{% if can_create_view %}warning{% else %}info{% endif %}"></i>
+            <div>
+                {% if can_create_view %}
+                <h4 class="alert-heading mb-2">{{ _('Interactive preview available') }}</h4>
+                <p class="mb-2">{{ _('Enable a dynamic view (table, chart, or map) for this resource.') }}</p>
+                <a href="{{ h.url_for('resource_view.new_view', id=pkg.name, resource_id=res.id) }}"
+                   class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i> {{ _('Create view now') }}
+                </a>
+                <button type="button" class="btn btn-link p-0 ms-2"
+                        data-bs-toggle="tooltip"
+                        title="{{ _('Works best with CSV/Excel files under 100 MB. DataStore will process the file automatically.') }}">
+                    <i class="fas fa-question-circle text-muted"></i>
+                </button>
+                {% else %}
+                <h4 class="alert-heading mb-2">{{ _('Want to explore this data interactively?') }}</h4>
+                <p class="mb-2">{{ _('This resource doesn’t have an interactive view yet. Contact your data team to request one.') }}</p>
+                <a href="mailto:datos-abiertos@tuinstitucion.gob.hn?subject=Solicitud%20de%20vista%20-%20{{ res.name | urlencode }}&body=ID%20recurso%3A%20{{ res.id }}%0ADataset%3A%20{{ pkg.title }}%0AArchivo%3A%20{{ res.name }}"
+                   class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-envelope me-1"></i> {{ _('Request preview') }}
+                </a>
                 {% endif %}
+            </div>
         </div>
-        {% endblock %}
-        {% block data_preview %}
-        {% block resource_view %}
-        {% block resource_view_nav %}
-        {% snippet "package/snippets/resource_views_list.html",
-        views=resource_views,
-        pkg=pkg,
-        is_edit=false,
-        view_id=current_resource_view['id'],
-        resource=resource,
-        extra_class="nav-tabs"
-        %}
-        {% endblock %}
-        {% block resource_view_content %}
-        <div class="resource-view">
-            {% if resource_views %}
+
+        <!-- Vistas existentes (si las hay) -->
+        {% if resource_views %}
+        <div class="resource-view mb-5">
+            {% block resource_view_nav %}
+            {% snippet "package/snippets/resource_views_list.html",
+            views=resource_views,
+            pkg=pkg,
+            is_edit=false,
+            view_id=current_resource_view['id'],
+            resource=res,
+            extra_class="nav-tabs"
+            %}
+            {% endblock %}
+
+            {% block resource_view_content %}
             {% for resource_view in resource_views %}
             {% if resource_view == current_resource_view %}
             {% snippet 'package/snippets/resource_view.html',
             resource_view=resource_view,
-            resource=resource,
-            package=package
+            resource=res,
+            package=pkg
             %}
             {% endif %}
             {% endfor %}
-            {% else %}
-            {# Views not created #}
-            <div class="data-viewer-info">
-                <p>{{ _("There are no views created for this resource yet.") }}</p>
-                {% if h.check_access('resource_view_create', {'resource_id': resource.id}) %}
-                <p class="text-muted">
-                    <i class="fa fa-info-circle"></i>
-                    {{ _("Not seeing the views you were expecting?")}}
-                    <a href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#data-view-info">
-                        {{ _('Click here for more information.') }}
-                    </a>
-                </p>
-                <div id="data-view-info" class="collapse">
-                    <p>{{ _('Here are some reasons you may not be seeing expected views:') }}</p>
-                    <ul>
-                        <li>{{ _("No view has been created that is suitable for this resource")}}</li>
-                        <li>{{ _("The site administrators may not have enabled the relevant view plugins")}}</li>
-                        <li>{{ _("If a view requires the DataStore, the DataStore plugin may not be enabled, or the data may not have been pushed to the DataStore, or the DataStore hasn't finished processing the data yet")}}</li>
-                    </ul>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
+            {% endblock %}
         </div>
-        {% endblock %}
+        {% endif %}
     </div>
-    {% endblock %}
-    {% endblock %}
-    {% endblock %}
 </section>
-  {% endblock %}
 {% endblock %}
 
 {% block primary_content %}
-
-  {% block resource_additional_information %}
-    {% if res %}
-<section class="module">
-    {% block resource_additional_information_inner %}
+<section class="module mt-4">
     <div class="module-content">
-        <h2>{{ _('Additional Information') }}</h2>
-        <table class="table table-striped table-bordered table-condensed" data-module="table-toggle-more">
-            <thead>
-                <tr>
-                    <th scope="col">{{ _('Field') }}</th>
-                    <th scope="col">{{ _('Value') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">{{ _('Data last updated') }}</th>
-                    <td>{{ h.render_datetime(res.last_modified) or h.render_datetime(res.created) or _('unknown') }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{ _('Metadata last updated') }}</th>
-                    <td>{{ h.render_datetime(res.metadata_modified) or h.render_datetime(res.created) or _('unknown') }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{ _('Created') }}</th>
-                    <td>{{ h.render_datetime(res.created) or _('unknown') }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{ _('Format') }}</th>
-                    <td>{{ res.format or res.mimetype_inner or res.mimetype or _('unknown') }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{ _('License') }}</th>
-                    <td>{% snippet "snippets/license.html", pkg_dict=pkg, text_only=True %}</td>
-                </tr>
-                {% for key, value in h.format_resource_items(res.items()) %}
-                {% if key not in ('created', 'metadata modified', 'last modified', 'format') %}
-                <tr class="toggle-more"><th scope="row">{{ key | capitalize }}</th><td>{{ value }}</td></tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
+        <h2 class="mb-4">{{ _('Additional Information') }}</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <h3 class="h5 text-muted mb-3"><i class="fas fa-info-circle me-2"></i> {{ _('About this resource') }}</h3>
+                <table class="table table-borderless table-sm">
+                    <tr><th class="text-nowrap">{{ _('Format') }}:</th><td><span class="badge bg-secondary">{{ res.format.upper() or '—' }}</span></td></tr>
+                    <tr><th>{{ _('Created') }}:</th><td>{{ h.render_datetime(res.created, date_format='%d %B %Y') or '—' }}</td></tr>
+                    <tr><th>{{ _('Data last updated') }}:</th><td>{{ h.render_datetime(res.last_modified, date_format='%d %B %Y') or h.render_datetime(res.created, date_format='%d %B %Y') or '—' }}</td></tr>
+                    <tr><th>{{ _('License') }}:</th><td>{% snippet "snippets/license.html", pkg_dict=pkg, text_only=True %}</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h3 class="h5 text-muted mb-3"><i class="fas fa-shield-alt me-2"></i> {{ _('Quality & readiness') }}</h3>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>{{ _('Interactive preview') }}</span>
+                        <strong>
+                            {% if res.datastore_active %}
+                            <span class="text-success"><i class="fas fa-check-circle me-1"></i> {{ _('Ready') }}</span>
+                            {% else %}
+                            <span class="text-warning"><i class="fas fa-clock me-1"></i> {{ _('Pending') }}</span>
+                            {% endif %}
+                        </strong>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-{% if res.datastore_active %}success{% else %}warning{% endif %}"
+                             role="progressbar"
+                             style="width: {% if res.datastore_active %}100{% else %}40{% endif %}%;">
+                        </div>
+                    </div>
+                    <small class="text-muted">{{ _('Requires DataStore processing for tables, charts, and maps.') }}</small>
+                </div>
+                <div>
+                    <span class="text-muted">{{ _('Has views') }}:</span>
+                    <span class="{% if res.has_views %}text-success{% else %}text-muted{% endif %}">
+                        {% if res.has_views %}
+                        <i class="fas fa-check me-1"></i> {{ _('Yes') }}
+                        {% else %}
+                        <i class="fas fa-times me-1"></i> {{ _('No') }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles técnicos (colapsable) -->
+        <details class="mt-4">
+            <summary class="btn btn-sm btn-outline-secondary">
+                {{ _('Technical details') }} <i class="fas fa-chevron-down ms-1"></i>
+            </summary>
+            <table class="table table-sm table-bordered mt-2">
+                <tr><th>ID</th><td><code>{{ res.id }}</code></td></tr>
+                <tr><th>Package ID</th><td><code>{{ res.package_id }}</code></td></tr>
+                <tr><th>Mimetype</th><td><code>{{ res.mimetype or 'text/csv' }}</code></td></tr>
+                <tr><th>URL type</th><td>{{ res.url_type or 'upload' }}</td></tr>
+                <tr><th>Position</th><td>{{ res.position }}</td></tr>
+                <tr><th>State</th><td><span class="badge bg-{% if res.state == 'active' %}success{% else %}secondary{% endif %}">{{ res.state }}</span></td></tr>
+                <tr><th>Size</th><td>{{ h.humanize_filesize(res.size) or '—' }}</td></tr>
+            </table>
+        </details>
     </div>
-    {% endblock %}
 </section>
-    {% endif %}
-  {% endblock %}
 {% endblock %}
 
 {% block secondary_content %}
-
-  {% block resources_list %}
-    {% snippet "package/snippets/resources.html", pkg=pkg, active=res.id, action='read' %}
-  {% endblock %}
-
-  {% block resource_social %}
-    {% snippet "snippets/social.html" %}
-  {% endblock %}
+  {% snippet "package/snippets/resources.html", pkg=pkg, active=res.id, action='read' %}
+  {% snippet "snippets/social.html" %}
 {% endblock %}
