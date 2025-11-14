@@ -5,7 +5,7 @@
 {% block head_extras -%}
 {{ super() }}
   {% set description = h.markdown_extract(h.get_translated(res, 'description'), extract_length=200) if res.description else h.markdown_extract(h.get_translated(package, 'notes'), extract_length=200) %}
-<meta property="org:title" content="{{ h.dataset_display_name(package) }} - {{ h.resource_display_name(res) }} - {{ g.site_title }}">
+<meta property="og:title" content="{{ h.dataset_display_name(package) }} - {{ h.resource_display_name(res) }} - {{ g.site_title }}">
 <meta property="og:description" content="{{ description|forceescape }}">
 {% endblock -%}
 
@@ -54,10 +54,13 @@
                     </div>
                 </li>
                 {% endif %}
+
                 {% endblock %}
             </ul>
             {% endblock %}
         </div>
+
+
 
         {% block resource_content %}
         <h1 class="page-heading mb-3">{{ h.resource_display_name(res) | truncate(60) }}</h1>
@@ -99,28 +102,16 @@
         </div>
         {% endif %}
 
-        {# === PREVISUALIZACIÓN SEGURA PARA RECURSOS SUBIDOS (CSV/TXT ≤5MB) === #}
-        {%- if res
-        and res.format
-        and res.format.strip().lower() in ['csv', 'txt']
-        and res.size is not none
-        and res.size <= 5242880  {# ≤5 MB (inclusivo) #}
-        and res.url_type == 'upload'
-        and res.id
-        and package
-        and package.name -%}
-        <div class="mb-4" id="preview-section-{{ res.id }}">
+   
+        {% if res.format and res.format.lower() in ['csv', 'txt'] and res.size and res.size < 5242880 and res.url_type == 'upload' and res.id %}
+        <div class="mb-4">
             <button class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-between w-100"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#preview-{{ res.id }}"
                     aria-expanded="false"
                     aria-controls="preview-{{ res.id }}"
-                    onclick="loadPreviewOnce(this,
-                    {{ res.id | tojson }},
-                    {{ package.name | tojson }},
-                    {{ (res.name | default('recurso.csv', true)) | replace(' ', '%20') | tojson }}
-                  )">
+                    onclick="loadPreviewOnce(this, '{{ res.id }}', '{{ package.name }}', '{{ res.name | replace(' ', '%20') if res.name else 'recurso.csv' }}')">
                 <span>
                     <i class="fa fa-eye me-2"></i>
                     {{ _('Ver vista previa (primeras 5 filas)') }}
@@ -143,105 +134,78 @@
         </div>
 
         <script>
-            {# Solo inyectamos la función una vez(evita duplicados en navegación SPA) # }
-            if (typeof window.loadPreviewOnce !== 'function') {
-                window.loadPreviewOnce = function (btn, resourceId, pkgName, fileName) {
-                    const section = document.getElementById('preview-section-' + resourceId);
-                    if (!section) return;
+            function loadPreviewOnce(btn, resourceId, pkgName, fileName) {
+                const collapse = document.getElementById('preview-' + resourceId);
+                if (!collapse || collapse.hasAttribute('data-loaded')) return; // ✅ Salida temprana segura
 
-                    const collapse = document.getElementById('preview-' + resourceId);
-                    const content = document.getElementById('preview-content-' + resourceId);
-                    const chevron = btn.querySelector('.chevron-toggle');
-                    if (!collapse || !content || !chevron) return;
+                const content = document.getElementById('preview-content-' + resourceId);
+                const chevron = btn.querySelector('.chevron-toggle');
+                if (!content || !chevron) return; // ✅ Más defensivo
 
-                    // Evitar múltiples cargas
-                    if (collapse.hasAttribute('data-loaded')) {
-                        chevron.classList.toggle('fa-chevron-right');
-                        chevron.classList.toggle('fa-chevron-down');
-                        return;
-                    }
+                chevron.classList.toggle('fa-chevron-right');
+                chevron.classList.toggle('fa-chevron-down');
 
-                    chevron.classList.toggle('fa-chevron-right');
-                    chevron.classList.toggle('fa-chevron-down');
+                const url = `/dataset/${encodeURIComponent(pkgName)}/resource/${encodeURIComponent(resourceId)}/download/${encodeURIComponent(fileName)}`;
 
-                    // ✅ URLs seguras
-                    const safePkgName = encodeURIComponent(pkgName);
-                    const safeResourceId = encodeURIComponent(resourceId);
-                    const safeFileName = encodeURIComponent(fileName);
-                    const url = `/dataset/${safePkgName}/resource/${safeResourceId}/download/${safeFileName}`;
+                fetch(url)
+                    .then(r => {
+                        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                        const contentType = r.headers.get('content-type') || '';
+                        // ✅ Solo procesa si parece texto plano o CSV
+                        if (!/^(text\/plain|text\/csv|application\/csv|.*\bcharset=)/i.test(contentType)) {
+                            throw new Error('non-text content type: ' + contentType);
+                        }
+                        return r.text();
+                    })
+                    .then(text => {
+                        // ✅ Valida que no sea binario (mínimo: no contenga bytes nulos o muchos caracteres no imprimibles)
+                        if (text.includes('\x00') || text.length === 0) {
+                            throw new Error('binary or empty content');
+                        }
 
-                    fetch(url, { credentials: 'same-origin' })
-                        .then(r => {
-                            if (!r.ok) throw new Error(`HTTP ${r.status}`);
-                            const contentType = (r.headers.get('content-type') || '').toLowerCase();
-                            if (!/^(text\/plain|text\/csv|application\/csv|text\/|.*charset=)/.test(contentType)) {
-                                throw new Error('non-text content: ' + contentType);
-                            }
-                            return r.text();
-                        })
-                        .then(text => {
-                            if (text.length === 0 || text.includes('\x00')) {
-                                throw new Error('binary or empty');
-                            }
+                        const lines = text.split('\n').filter(l => l.trim());
+                        if (lines.length < 1) throw new Error('no data');
 
-                            const lines = text.split(/\r?\n/).filter(l => l.trim());
-                            if (lines.length === 0) throw new Error('no data');
+                        // ✅ Límite de columnas para evitar tablas absurdamente anchas (ej. 100 cols máx)
+                        const headers = lines[0].split(',').map(h => h.trim()).slice(0, 100);
+                        const rows = lines.slice(1, 6).map(line =>
+                            line.split(',').map(cell => cell.trim().replace(/^"(.*)"$/, '$1')).slice(0, 100)
+                        );
 
-                            // ✅ Detección inteligente de separador
-                            const firstLine = lines[0];
-                            const commaCount = (firstLine.match(/,/g) || []).length;
-                            const semicolonCount = (firstLine.match(/;/g) || []).length;
-                            const separator = semicolonCount > commaCount ? ';' : ',';
-
-                            const headers = firstLine.split(separator).map(h => h.trim()).slice(0, 50);
-                            const rows = lines.slice(1, 6).map(line =>
-                                line.split(separator).map(cell =>
-                                    cell.trim().replace(/^"(.*)"$/, '$1')
-                                ).slice(0, 50)
-                            );
-
-                            // ✅ Escape HTML seguro (CORREGIDO)
-                            let html = '<div class="table-responsive" style="max-height:300px; overflow:auto;"><table class="table table-sm table-bordered mb-0"><thead><tr>';
-                            headers.forEach(h => {
-                                const escaped = (h || '&nbsp;')
+                        let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
+                        headers.forEach(h => html += `<th scope="col">${(h || '&nbsp;').replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>')}</th>`);
+                        html += '</tr></thead><tbody>';
+                        rows.forEach(row => {
+                            html += '<tr>';
+                            for (let i = 0; i < headers.length; i++) {
+                                const v = row[i] || '';
+                                const safe = v
                                     .replace(/&/g, '&amp;')
-                                    .replace(/</g, '<')   // ✅ CRÍTICO: previene XSS
-                                    .replace(/>/g, '>');   // ✅
-                                html += `<th scope="col" class="text-nowrap">${escaped}</th>`;
-                            });
-                            html += '</tr></thead><tbody>';
-                            rows.forEach(row => {
-                                html += '<tr>';
-                                for (let i = 0; i < headers.length; i++) {
-                                    const v = row[i] || '';
-                                    const safe = v
-                                        .replace(/&/g, '&amp;')
-                                        .replace(/</g, '<')   // ✅
-                                        .replace(/>/g, '>')   // ✅
-                                        .replace(/"/g, '&quot;')
-                                        .replace(/'/g, '&#039;');
-                                    html += `<td class="text-nowrap">${safe}</td>`;
-                                }
-                                html += '</tr>';
-                            });
-                            html += '</tbody></table></div>';
-                            content.innerHTML = html;
-                        })
-                        .catch(err => {
-                            // ✅ FAIL-SILENT: elimina el bloque completo si hay error
-                            if (section && section.parentNode) {
-                                section.parentNode.removeChild(section);
+                                    .replace(/</g, '<')   // ✅ Usa < en lugar de < (¡error crítico en tu código original!)
+                                    .replace(/>/g, '>')   // ✅ Igual aquí
+                                    .replace(/"/g, '&quot;')
+                                    .replace(/'/g, '&#039;');
+                                html += `<td>${safe}</td>`;
                             }
-                            // console.warn('[Preview] Suppressed for', resourceId, err.message || err);
-                        })
-                        .finally(() => {
-                            if (collapse) collapse.setAttribute('data-loaded', 'true');
+                            html += '</tr>';
                         });
-                };
+                        html += '</tbody></table></div>';
+                        content.innerHTML = html;
+                    })
+                    .catch(err => {
+                        // ✅ En lugar de mostrar mensaje, *elimina silenciosamente* el botón y el collapse
+                        const btnEl = btn.closest('.mb-4');
+                        if (btnEl) btnEl.remove();
+                        // Opcional: deja un comentario en consola para debugging (solo en dev)
+                        // console.warn('Preview suppressed for', resourceId, err);
+                    })
+                    .finally(() => {
+                        if (collapse) collapse.setAttribute('data-loaded', 'true');
+                    });
             }
         </script>
-        {%- endif -%}
-
+        {% endif %}
+        
         {% if res.url and res.url_type != 'upload' and res.format and res.format.lower() in ['csv', 'json'] %}
         <div class="alert alert-info small mb-4">
             <i class="fa fa-link me-1"></i>
@@ -260,6 +224,7 @@
             </div>
         </div>
         {% endif %}
+
 
         {% endblock %}
 
