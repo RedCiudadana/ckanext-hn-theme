@@ -122,7 +122,7 @@
             <div class="collapse mt-3" id="preview-{{ res.id }}">
                 <div class="card">
                     <div class="card-header bg-light small">
-                        <i class="fa fa-table me-1"></i> {{ _('Datos de ejemplo') }}
+                        <i class="fa fa-table me-1"></i> {{ _('Muestra de datos') }}
                     </div>
                     <div class="card-body p-3">
                         <div id="preview-content-{{ res.id }}" class="text-center py-2">
@@ -166,7 +166,12 @@
                 html += '<tr>';
                 for (let i = 0; i < headers.length; i++) {
                   const v = row[i] || '';
-                  const safe = v.replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>');
+                    const safe = v
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '<')
+                        .replace(/>/g, '>')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
                   html += `<td>${safe}</td>`;
                 }
                 html += '</tr>';
