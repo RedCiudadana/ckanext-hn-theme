@@ -206,7 +206,7 @@
         </script>
         {% endif %}
         
-        <!--{% if res.url and res.url_type != 'upload' and res.format and res.format.lower() in ['csv', 'json'] %}
+        {% if res.url and res.url_type != 'upload' and res.format and res.format.lower() in ['csv', 'json'] %}
         <div class="alert alert-info small mb-4">
             <i class="fa fa-link me-1"></i>
             <strong>{{ _('Recurso externo') }}:</strong>
@@ -223,7 +223,7 @@
                 {% endif %}
             </div>
         </div>
-        {% endif %}-->
+        {% endif %}
 
 
         {% endblock %}
