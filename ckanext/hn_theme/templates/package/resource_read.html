@@ -103,7 +103,7 @@
         {% endif %}
 
    
-        <!--{% if res.format and res.format.lower() in ['csv', 'txt'] and res.size and res.size < 5242880 and res.url_type == 'upload' and res.id %}
+        {% if res.format and res.format.lower() in ['csv', 'txt'] and res.size and res.size < 5242880 and res.url_type == 'upload' and res.id %}
         <div class="mb-4">
             <button class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-between w-100"
                     type="button"
@@ -204,7 +204,7 @@
                     });
             }
         </script>
-        {% endif %}-->
+        {% endif %}
         
         {% if res.url and res.url_type != 'upload' and res.format and res.format.lower() in ['csv', 'json'] %}
         <div class="alert alert-info small mb-4">
@@ -316,7 +316,7 @@
 {% block primary_content %}
   {% block resource_additional_information %}
     {% if res %}
-<!--<section class="module">
+<section class="module">
     {% block resource_additional_information_inner %}
     <div class="module-content">
         <h2 class="mb-4">{{ _('Información adicional') }}</h2>
@@ -380,7 +380,7 @@
         </table>
     </div>
     {% endblock %}
-</section>-->
+</section>
     {% endif %}
   {% endblock %}
 {% endblock %}
