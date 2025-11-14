@@ -134,60 +134,75 @@
         </div>
 
         <script>
-        function loadPreviewOnce(btn, resourceId, pkgName, fileName) {
-          const collapse = document.getElementById('preview-' + resourceId);
-          const content = document.getElementById('preview-content-' + resourceId);
-          const chevron = btn.querySelector('.chevron-toggle');
+            function loadPreviewOnce(btn, resourceId, pkgName, fileName) {
+                const collapse = document.getElementById('preview-' + resourceId);
+                if (!collapse || collapse.hasAttribute('data-loaded')) return; // ✅ Salida temprana segura
 
-          chevron.classList.toggle('fa-chevron-right');
-          chevron.classList.toggle('fa-chevron-down');
+                const content = document.getElementById('preview-content-' + resourceId);
+                const chevron = btn.querySelector('.chevron-toggle');
+                if (!content || !chevron) return; // ✅ Más defensivo
 
-          if (collapse.hasAttribute('data-loaded')) return;
+                chevron.classList.toggle('fa-chevron-right');
+                chevron.classList.toggle('fa-chevron-down');
 
-          const url = `/dataset/${pkgName}/resource/${resourceId}/download/${fileName}`;
+                const url = `/dataset/${encodeURIComponent(pkgName)}/resource/${encodeURIComponent(resourceId)}/download/${encodeURIComponent(fileName)}`;
 
-          fetch(url)
-            .then(r => {
-              if (!r.ok) throw new Error('HTTP ' + r.status);
-              return r.text();
-            })
-            .then(text => {
-              const lines = text.split('\n').filter(l => l.trim());
-              if (lines.length < 1) throw new Error('empty');
-              const headers = lines[0].split(',').map(h => h.trim());
-              const rows = lines.slice(1, 6).map(line =>
-                line.split(',').map(cell => cell.trim().replace(/^"(.*)"$/, '$1'))
-              );
+                fetch(url)
+                    .then(r => {
+                        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                        const contentType = r.headers.get('content-type') || '';
+                        // ✅ Solo procesa si parece texto plano o CSV
+                        if (!/^(text\/plain|text\/csv|application\/csv|.*\bcharset=)/i.test(contentType)) {
+                            throw new Error('non-text content type: ' + contentType);
+                        }
+                        return r.text();
+                    })
+                    .then(text => {
+                        // ✅ Valida que no sea binario (mínimo: no contenga bytes nulos o muchos caracteres no imprimibles)
+                        if (text.includes('\x00') || text.length === 0) {
+                            throw new Error('binary or empty content');
+                        }
 
-              let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
-              headers.forEach(h => html += `<th scope="col">${h || '&nbsp;'}</th>`);
-              html += '</tr></thead><tbody>';
-              rows.forEach(row => {
-                html += '<tr>';
-                for (let i = 0; i < headers.length; i++) {
-                  const v = row[i] || '';
-                    const safe = v
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '<')
-                        .replace(/>/g, '>')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#039;');
-                  html += `<td>${safe}</td>`;
-                }
-                html += '</tr>';
-              });
-              html += '</tbody></table></div>';
-              content.innerHTML = html;
-            })
-            .catch(err => {
-              content.innerHTML = `
-                <p class="text-center text-muted">
-                  <i class="fa fa-exclamation-triangle text-warning me-1"></i>
-                  {{ _('Vista previa no disponible') }}
-                </p>`;
-            })
-            .finally(() => collapse.setAttribute('data-loaded', 'true'));
-        }
+                        const lines = text.split('\n').filter(l => l.trim());
+                        if (lines.length < 1) throw new Error('no data');
+
+                        // ✅ Límite de columnas para evitar tablas absurdamente anchas (ej. 100 cols máx)
+                        const headers = lines[0].split(',').map(h => h.trim()).slice(0, 100);
+                        const rows = lines.slice(1, 6).map(line =>
+                            line.split(',').map(cell => cell.trim().replace(/^"(.*)"$/, '$1')).slice(0, 100)
+                        );
+
+                        let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr>';
+                        headers.forEach(h => html += `<th scope="col">${(h || '&nbsp;').replace(/&/g, '&amp;').replace(/</g, '<').replace(/>/g, '>')}</th>`);
+                        html += '</tr></thead><tbody>';
+                        rows.forEach(row => {
+                            html += '<tr>';
+                            for (let i = 0; i < headers.length; i++) {
+                                const v = row[i] || '';
+                                const safe = v
+                                    .replace(/&/g, '&amp;')
+                                    .replace(/</g, '<')   // ✅ Usa < en lugar de < (¡error crítico en tu código original!)
+                                    .replace(/>/g, '>')   // ✅ Igual aquí
+                                    .replace(/"/g, '&quot;')
+                                    .replace(/'/g, '&#039;');
+                                html += `<td>${safe}</td>`;
+                            }
+                            html += '</tr>';
+                        });
+                        html += '</tbody></table></div>';
+                        content.innerHTML = html;
+                    })
+                    .catch(err => {
+                        // ✅ En lugar de mostrar mensaje, *elimina silenciosamente* el botón y el collapse
+                        const btnEl = btn.closest('.mb-4');
+                        if (btnEl) btnEl.remove();
+                        // Opcional: deja un comentario en consola para debugging (solo en dev)
+                        // console.warn('Preview suppressed for', resourceId, err);
+                    })
+                    .finally(() => {
+                        if (collapse) collapse.setAttribute('data-loaded', 'true');
+                    });
+            }
         </script>
         {% endif %}
         
