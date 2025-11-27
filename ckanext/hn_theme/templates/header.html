@@ -1,32 +1,59 @@
 {% ckan_extends %}
 
-{% block header_site_search %}
-<div class="d-flex contact-info">
-    <a href="https://x.com/stlcchn" target="_blank">
-        <img src="/img/icons/x.png" alt="x">
-    </a>
-    <a href="https://www.facebook.com/stlcchonduras/" target="_blank">
-        <img src="/img/icons/facebook.png" alt="facebook">
-    </a>
-    <a href="https://www.instagram.com/stlcchn" target="_blank">
-        <img src="/img/icons/instagram.png" alt="instagram">
-    </a>   
-</div>
-{% endblock %}
+{% block header_wrapper %}
+<header class="navbar navbar-static-top" role="navigation">
+  <div class="container-fluid px-3 py-1"> {# Reducido padding vertical: py-1 → más compacto #}
+    <div class="d-flex w-100 align-items-center">
 
-{% block header_site_navigation_tabs %}
-    {% set org_type = h.default_group_type('organization') %}
-    {% set group_type = h.default_group_type('group') %}
+      {# ——— LOGO + NOMBRE (izquierda) ——— #}
+      <div class="me-auto">
+        {% block header_logo %}
+          <a class="navbar-brand" href="{{ h.url_for('home.index') }}">
+            <img src="/img/DAHONDURAS-01.png" alt="CKAN Honduras" height="32" class="d-inline-block align-text-top">
+            
+          </a>
+        {% endblock %}
+      </div>
 
-{{
- h.build_nav_main(
-    (dataset_type ~ '.search', h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets'), ["dataset", "resource"]),
-    (org_type ~ '.index',
-        h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'), ['organization']),
-    (group_type ~ '.index',
-        h.humanize_entity_type('group', group_type, 'main nav') or _('Groups'), ['group']),
-    ('home.about', _('About')) )
-}}
-<li><a href="/stats">Estadísticas prueba</a></li>
+      {# ——— MENÚ PRINCIPAL (alineado a la izquierda, tras el logo) ——— #}
+      <nav class="navbar-nav nav me-auto">
+        {% block header_site_navigation %}
+          {% block header_site_navigation_tabs %}
+            {% set org_type = h.default_group_type('organization') %}
+            {% set group_type = h.default_group_type('group') %}
 
+            {{
+              h.build_nav_main(
+                (dataset_type ~ '.search', h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets')),
+                (org_type ~ '.index', h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations')),
+                (group_type ~ '.index', h.humanize_entity_type('group', group_type, 'main nav') or _('Groups')),
+                ('home.about', _('About'))
+              )
+            }}
+            <li class="nav-item"><a class="nav-link" href="/stats">Estadísticas</a></li>
+          {% endblock %}
+        {% endblock %}
+      </nav>
+
+      {# ——— REDES SOCIALES (derecha, compactas) ——— #}
+      <div class="d-flex contact-info ms-3">
+        <a href="https://x.com/stlcchn" target="_blank" class="mx-1" aria-label="Twitter/X">
+          <img src="/img/icons/x.png" alt="X" width="20" height="20">
+        </a>
+        <a href="https://www.facebook.com/stlcchonduras/" target="_blank" class="mx-1" aria-label="Facebook">
+          <img src="/img/icons/facebook.png" alt="Facebook" width="20" height="20">
+        </a>
+        <a href="https://www.instagram.com/stlcchn" target="_blank" class="mx-1" aria-label="Instagram">
+          <img src="/img/icons/instagram.png" alt="Instagram" width="20" height="20">
+        </a>
+      </div>
+
+      {# ——— OPCIONES DE USUARIO (derecha, separadas visualmente) ——— #}
+      <div class="ms-3">
+        {% snippet 'snippets/user_actions.html' %}
+      </div>
+
+    </div>
+  </div>
+</header>
 {% endblock %}
