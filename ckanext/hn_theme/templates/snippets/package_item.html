@@ -19,11 +19,12 @@ Example:
         <div class="card shadow-sm">
             <div class="row mt-1">
                 {% if package.organization and package.organization.image_url %}
+                {% set img_url = h.url_for_static(package.organization.image_url) %}
                 <div class="col-md-2 mt-4 pt-2">
-                    <img src="{{ package.organization.image_url }}" 
-                         alt="{{ package.organization.title }}" 
+                    <img src="{{ img_url }}"
+                         alt="{{ package.organization.title }}"
                          class="img-fluid"
-                         style="max-height: 60px;">
+                         style="max-height: 60px; object-fit: contain;">
                 </div>
                 {% endif %}
 
@@ -40,8 +41,8 @@ Example:
 
                     {% block heading_title %}
                     <h2 class="h5 mb-1">
-                        <a href="{{ h.url_for('%s.read' % package.type, id=package.name) }}" 
-                           class="text-decoration-none" 
+                        <a href="{{ h.url_for('%s.read' % package.type, id=package.name) }}"
+                           class="text-decoration-none"
                            title="{{ title }}">
                             {{ title|truncate(80) }}
                         </a>
@@ -50,16 +51,16 @@ Example:
                     <!-- NUEVO: Institución + última actualización en una sola línea -->
                     <div class="text-muted small mt-2 mb-1 d-flex align-items-center flex-wrap">
                         {% if package.organization %}
-                            <span class="me-2">
-                                <i class="fa fa-university"></i> <strong>Institución:</strong>  {{ package.organization.title }}
-                            </span>
+                        <span class="me-2">
+                            <i class="fa fa-university"></i> <strong>Institución:</strong>  {{ package.organization.title }}
+                        </span>
                         {% endif %}
                     </div>
                     <div class="text-muted small mb-1 d-flex align-items-center flex-wrap">
                         {% if package.metadata_modified %}
-                            <span>
-                                <i class="fa fa-clock"></i> <strong>Última Actualización:</strong> {{ h.render_datetime(package.metadata_modified, date_format='%d %b %Y') }}
-                            </span>
+                        <span>
+                            <i class="fa fa-clock"></i> <strong>Última Actualización:</strong> {{ h.render_datetime(package.metadata_modified, date_format='%d %b %Y') }}
+                        </span>
                         {% endif %}
                     </div>
                     <!--FIN NUEVO -->
@@ -84,8 +85,8 @@ Example:
                         <div class="d-flex flex-wrap gap-2">
                             {% for resource in h.dict_list_reduce(package.resources, 'format') %}
                             <a href="{{ h.url_for(package.type ~ '.read', id=package.name) }}"
-                                class="badge"
-                                data-format="{{ resource.lower() }}">
+                               class="badge"
+                               data-format="{{ resource.lower() }}">
                                 {{ resource }}
                             </a>
                             {% endfor %}
