@@ -21,9 +21,13 @@ Example:
                 {% if package.organization and package.organization.image_url %}
                 <div class="col-md-2 mt-4 pt-2">
 
-                    {% set org_logo = package.organization.get('org_logo', h.url_for_static('/base/images/placeholder-organization.png')) %}
-                    <img src="{{ org_logo }}?v={{ package.organization.revision_timestamp|replace(':', '')|replace('-', '')|replace('T', '') }}"
-                         alt="{{ package.organization.title }}"
+                    {% set org_logo = h.get_extra_value(organization.extras, 'org_logo') %}
+                    {% if not org_logo %}
+                    {% set org_logo = h.url_for_static('/base/images/placeholder-organization.png') %}
+                    {% endif %}
+
+                    <img src="{{ org_logo }}?v={{ organization.revision_timestamp|replace(':', '')|replace('-', '')|replace('T', '') }}"
+                         alt="{{ organization.title }}"
                          class="img-fluid"
                          style="max-height: 60px;">
                 </div>
