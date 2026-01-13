@@ -1046,3 +1046,14 @@ body {
       flex: 0 0 calc(25% - 13.33px);
     }
   }
+
+.organization-item img,
+.media-image img {
+    filter: grayscale(100%);
+    transition: filter 0.2s ease;
+}
+
+.organization-item:hover img,
+.media-image:hover img {
+    filter: grayscale(0%);
+}
